@@ -74,6 +74,7 @@
       <DependentUpon>frmMyDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="Main.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="NppPluginNETBase.cs" />
     <Compile Include="NppPluginNETHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

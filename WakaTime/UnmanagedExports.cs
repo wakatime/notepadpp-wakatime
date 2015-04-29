@@ -56,6 +56,18 @@ namespace WakaTime
                 Main.PluginCleanUp();
                 Marshal.FreeHGlobal(_ptrPluginName);
             }
+            else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED)
+            {
+                Main.handleActivity(true);
+            }
+            else if (nc.nmhdr.code == (uint)SciMsg.SCI_ADDTEXT)
+            {
+                Main.handleActivity(false);
+            }
+            else if (nc.nmhdr.code == (uint)SciMsg.SCI_INSERTTEXT)
+            {
+                Main.handleActivity(false);
+            }
         }
     }
 }
