@@ -55,11 +55,12 @@
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigFileHelper.cs" />
+    <Compile Include="Config.cs" />
     <Compile Include="DllExport\DllExportAttribute.cs" />
     <Compile Include="ApiKeyForm.cs">
       <SubType>Form</SubType>
@@ -67,6 +68,7 @@
     <Compile Include="ApiKeyForm.Designer.cs">
       <DependentUpon>ApiKeyForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Downloader.cs" />
     <Compile Include="Forms\frmMyDlg.cs">
       <SubType>Form</SubType>
     </Compile>

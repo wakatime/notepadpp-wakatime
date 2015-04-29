@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace WakaTime
 {
-    class ConfigFileHelper
+    class Config
     {
         [DllImport("kernel32")]
         private static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
@@ -12,10 +12,6 @@ namespace WakaTime
         [DllImport("kernel32")]
         private static extern int GetPrivateProfileString(string section, string key, string def, StringBuilder retVal, int size, string filePath);
 
-        /// <summary>
-        /// Retrive ApiKey from config file.
-        /// </summary>
-        /// <returns></returns>
         public static string getApiKey()
         {
             StringBuilder keyValue = new StringBuilder(255);
@@ -31,11 +27,7 @@ namespace WakaTime
             return null;
         }
 
-        /// <summary>
-        /// Update ApiKey file in config file
-        /// </summary>
-        /// <returns></returns>
-        public static void updateApiKey(string apiKey)
+        public static void setApiKey(string apiKey)
         {
             string configFilepath = getConfigFilePath();
             if (string.IsNullOrWhiteSpace(apiKey) == false)

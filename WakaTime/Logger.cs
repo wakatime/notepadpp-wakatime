@@ -10,47 +10,71 @@ namespace WakaTime
     class Logger
     {
 
-        private StreamWriter writer;
+        public static int DEBUG = 3;
+        public static int INFO = 2;
+        public static int WARN = 1;
+        public static int ERROR = 0;
+        public static string[] LEVELS = new string[] { "ERROR", "WARN", "INFO", "DEBUG" };
+        private static int currentLevel = 2;
 
         public Logger()
         {
+        }
+
+        public static void Debug(String msg)
+        {
+            Log(Logger.DEBUG, msg);
+        }
+
+        public static void Info(String msg)
+        {
+            Log(Logger.INFO, msg);
+        }
+
+        public static void Warning(String msg)
+        {
+            Log(Logger.WARN, msg);
+        }
+
+        public static void Error(String msg)
+        {
+            Log(Logger.ERROR, msg);
+        }
+
+        public static void Log(int level, String msg)
+        {
+            if (level <= currentLevel && level >= 0)
+            {
+                StreamWriter writer = Setup();
+                if (writer != null)
+                {
+                    writer.WriteLine(DateTime.Now.ToLongTimeString() + " : " + Main.PluginName + " : " + Logger.LEVELS[level] + " : " + msg);
+                    writer.Flush();
+                    writer.Close();
+                }
+            }
+        }
+
+        private static StreamWriter Setup()
+        {
+            StreamWriter writer = null;
             string userHomeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             if (string.IsNullOrWhiteSpace(userHomeDir) == false)
             {
                 string filename = userHomeDir + "\\" + "notepadpp-wakatime.log";
-                this.writer = new StreamWriter(File.Open(filename, FileMode.Append, FileAccess.Write));
+                writer = new StreamWriter(File.Open(filename, FileMode.Append, FileAccess.Write));
             }
+            return writer;
         }
 
-        public void Info(String msg)
+        public static void setLevel(int level)
         {
-            this.Log("INFO", msg);
+            if (level < 0 || level >= LEVELS.Length)
+            {
+                level = 2;
+            }
+            currentLevel = level;
         }
 
-        public void Warning(String msg)
-        {
-            this.Log("WARN", msg);
-        }
-
-        public void Debug(String msg)
-        {
-            this.Log("DEBUG", msg);
-        }
-
-        public void Error(String msg)
-        {
-            this.Log("ERROR", msg);
-        }
-
-        public void Log(String level, String msg)
-        {
-            writer.WriteLine(level + " -- " + DateTime.Now.ToLongTimeString() + " -- " + msg);
-            writer.Flush();
-        }
-
-        public void Dispose()
-        {
-            writer.Close();
-        }
     }
 }

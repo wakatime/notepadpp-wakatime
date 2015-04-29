@@ -21,7 +21,7 @@ namespace WakaTime
         {
             try
             {
-                string apiKey = ConfigFileHelper.getApiKey();
+                string apiKey = Config.getApiKey();
                 if (string.IsNullOrWhiteSpace(apiKey) == false)
                 {
                     txtAPIKey.Text = apiKey;
@@ -40,7 +40,7 @@ namespace WakaTime
                 string apiKey = txtAPIKey.Text.Trim();
                 if (string.IsNullOrWhiteSpace(apiKey) == false)
                 {
-                    ConfigFileHelper.updateApiKey(apiKey);
+                    Config.setApiKey(apiKey);
                     Main.apiKey = apiKey;
                 }
                 else
