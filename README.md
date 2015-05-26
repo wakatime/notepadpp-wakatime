@@ -7,7 +7,7 @@ Notepad++ plugin to quantify your coding.
 Installation
 ------------
 
-1. Download the plugin [WakaTime.dll](https://github.com/wakatime/notepadpp-wakatime/releases/download/1.0.0/WakaTime.dll).
+1. Download the plugin [WakaTime.dll](https://github.com/wakatime/notepadpp-wakatime/releases/download/1.1.0/WakaTime.dll).
 
 2. Copy WakaTime.dll to your Notepad++ plugins folder at `C:\Program Files\Notepad++\plugins`.
 
