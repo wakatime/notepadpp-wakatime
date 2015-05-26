@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using NppPluginNET;
 using NppPlugin.DllExport;
 
 namespace WakaTime
@@ -16,15 +15,15 @@ namespace WakaTime
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void setInfo(NppData notepadPlusData)
         {
-            PluginBase.nppData = notepadPlusData;
-            Main.CommandMenuInit();
+            PluginBase.NppData = notepadPlusData;
+            WakaTime.CommandMenuInit();
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static IntPtr getFuncsArray(ref int nbF)
         {
-            nbF = PluginBase._funcItems.Items.Count;
-            return PluginBase._funcItems.NativePointer;
+            nbF = PluginBase.FuncItems.Items.Count;
+            return PluginBase.FuncItems.NativePointer;
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
@@ -38,7 +37,7 @@ namespace WakaTime
         static IntPtr getName()
         {
             if (_ptrPluginName == IntPtr.Zero)
-                _ptrPluginName = Marshal.StringToHGlobalUni(Main.PluginName);
+                _ptrPluginName = Marshal.StringToHGlobalUni(WakaTime.PluginName);
             return _ptrPluginName;
         }
 
@@ -48,25 +47,25 @@ namespace WakaTime
             SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
             if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
             {
-                PluginBase._funcItems.RefreshItems();
-                Main.SetToolBarIcon();
+                PluginBase.FuncItems.RefreshItems();
+                WakaTime.SetToolBarIcon();
             }
             else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
             {
-                Main.PluginCleanUp();
+                WakaTime.PluginCleanUp();
                 Marshal.FreeHGlobal(_ptrPluginName);
             }
             else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED)
             {
-                Main.handleActivity(true);
+                WakaTime.HandleActivity(true);
             }
             else if (nc.nmhdr.code == (uint)SciMsg.SCI_ADDTEXT)
             {
-                Main.handleActivity(false);
+                WakaTime.HandleActivity(false);
             }
             else if (nc.nmhdr.code == (uint)SciMsg.SCI_INSERTTEXT)
             {
-                Main.handleActivity(false);
+                WakaTime.HandleActivity(false);
             }
         }
     }
