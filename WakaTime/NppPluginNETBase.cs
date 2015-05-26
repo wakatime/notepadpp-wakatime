@@ -1,15 +1,15 @@
 ﻿using System;
 
-namespace NppPluginNET
+namespace WakaTime
 {
     class PluginBase
     {
-        #region " Fields "
-        internal static NppData nppData;
-        internal static FuncItems _funcItems = new FuncItems();
+        #region Fields
+        internal static NppData NppData;
+        internal static FuncItems FuncItems = new FuncItems();
         #endregion
 
-        #region " Helper "
+        #region Helper
         internal static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer)
         {
             SetCommand(index, commandName, functionPointer, new ShortcutKey(), false);
@@ -24,22 +24,24 @@ namespace NppPluginNET
         }
         internal static void SetCommand(int index, string commandName, NppFuncItemDelegate functionPointer, ShortcutKey shortcut, bool checkOnInit)
         {
-            FuncItem funcItem = new FuncItem();
-            funcItem._cmdID = index;
-            funcItem._itemName = commandName;
+            var funcItem = new FuncItem
+            {
+                _cmdID = index,
+                _itemName = commandName
+            };
             if (functionPointer != null)
-                funcItem._pFunc = new NppFuncItemDelegate(functionPointer);
+                funcItem._pFunc = functionPointer;
             if (shortcut._key != 0)
                 funcItem._pShKey = shortcut;
             funcItem._init2Check = checkOnInit;
-            _funcItems.Add(funcItem);
+            FuncItems.Add(funcItem);
         }
 
         internal static IntPtr GetCurrentScintilla()
         {
             int curScintilla;
-            Win32.SendMessage(nppData._nppHandle, NppMsg.NPPM_GETCURRENTSCINTILLA, 0, out curScintilla);
-            return (curScintilla == 0) ? nppData._scintillaMainHandle : nppData._scintillaSecondHandle;
+            Win32.SendMessage(NppData._nppHandle, NppMsg.NPPM_GETCURRENTSCINTILLA, 0, out curScintilla);
+            return (curScintilla == 0) ? NppData._scintillaMainHandle : NppData._scintillaSecondHandle;
         }
         #endregion
     }

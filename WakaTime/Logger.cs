@@ -48,7 +48,7 @@ namespace WakaTime
                 StreamWriter writer = Setup();
                 if (writer != null)
                 {
-                    writer.WriteLine(DateTime.Now.ToLongTimeString() + " : " + Main.PluginName + " : " + Logger.LEVELS[level] + " : " + msg);
+                    writer.WriteLine(DateTime.Now.ToLongTimeString() + " : " + WakaTime.PluginName + " : " + Logger.LEVELS[level] + " : " + msg);
                     writer.Flush();
                     writer.Close();
                 }

@@ -5,9 +5,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
 
-namespace NppPluginNET
+namespace WakaTime
 {
-    #region " Notepad++ "
+    #region Notepad++
     [StructLayout(LayoutKind.Sequential)]
     public struct NppData
     {
@@ -1145,7 +1145,7 @@ namespace NppPluginNET
     }
     #endregion
 
-    #region " Scintilla "
+    #region Scintilla
     [StructLayout(LayoutKind.Sequential)]
     public struct Sci_NotifyHeader
     {
@@ -2126,7 +2126,7 @@ namespace NppPluginNET
     }
     #endregion
 
-    #region " Platform "
+    #region Platform
     public class Win32
     {
         [DllImport("user32")]

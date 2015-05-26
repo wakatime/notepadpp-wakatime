@@ -69,13 +69,8 @@
       <DependentUpon>ApiKeyForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Downloader.cs" />
-    <Compile Include="Forms\frmMyDlg.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\frmMyDlg.Designer.cs">
-      <DependentUpon>frmMyDlg.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Main.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="WakaTime.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="NppPluginNETBase.cs" />
     <Compile Include="NppPluginNETHelper.cs" />
@@ -90,9 +85,6 @@
   <ItemGroup>
     <EmbeddedResource Include="ApiKeyForm.resx">
       <DependentUpon>ApiKeyForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmMyDlg.resx">
-      <DependentUpon>frmMyDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -111,6 +103,10 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>true</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Resources\wakatime-120.png" />
+    <None Include="Resources\wakatime-16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(MSBuildProjectDirectory)\DllExport\NppPlugin.DllExport.targets" />
