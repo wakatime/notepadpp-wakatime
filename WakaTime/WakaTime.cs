@@ -18,7 +18,7 @@ namespace WakaTime
         internal const string NativeName = "WakaTime";
         private const string CurrentWakaTimeCLIVersion = "4.0.13"; // https://github.com/wakatime/wakatime/blob/master/HISTORY.rst
         private const string _cliUrl = "https://github.com/wakatime/wakatime/archive/master.zip";
-        private static string _version = CoreAssembly.Version.ToString();
+        private static string _version = CoreAssembly.Version.Major.ToString() + '.' + CoreAssembly.Version.Minor.ToString() + '.' + CoreAssembly.Version.Build.ToString();
         internal const string UserAgent = "notepadpp-wakatime";
         private const string EditorName = "notepadpp";
         private const string CurrentPythonVersion = "3.4.3";
@@ -39,7 +39,6 @@ namespace WakaTime
         #region StartUp/CleanUp
         internal static void CommandMenuInit()
         {
-            _version = CoreAssembly.Version.ToString();
             _editorVersion = (int)Win32.SendMessage(PluginBase.NppData._nppHandle, NppMsg.NPPM_GETNPPVERSION, 0, 0);
 
             var sbIniFilePath = new StringBuilder(Win32.MAX_PATH);
