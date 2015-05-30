@@ -18,8 +18,9 @@ namespace WakaTime
         private static string _version = CoreAssembly.Version.ToString();
         internal const string PluginName = "notepadpp-wakatime";
         private const string EditorName = "notepadpp";
-        private static int _editorVersion;
         private const string CurrentPythonVersion = "3.4.3";
+        private static int _editorVersion;
+        private static string _pythonBinaryLocation = null;
 
         private static string _iniFilePath;
         private static int _idMyDlg = -1;
@@ -143,6 +144,9 @@ namespace WakaTime
 
         public static string GetPython()
         {
+            if (_pythonBinaryLocation != null)
+                return _pythonBinaryLocation;
+
             string[] locations = {
                 "pythonw",
                 "python",
@@ -202,7 +206,10 @@ namespace WakaTime
                     var proc = Process.Start(procInfo);
                     var errors = proc.StandardError.ReadToEnd();
                     if (string.IsNullOrEmpty(errors))
+                    {
+                        _pythonBinaryLocation = location;
                         return location;
+                    }
                 }
                 catch { /* ignored */ }
             }
