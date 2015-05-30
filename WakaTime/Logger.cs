@@ -48,7 +48,7 @@ namespace WakaTime
                 StreamWriter writer = Setup();
                 if (writer != null)
                 {
-                    writer.WriteLine(DateTime.Now.ToLongTimeString() + " : " + WakaTime.PluginName + " : " + Logger.LEVELS[level] + " : " + msg);
+                    writer.WriteLine(DateTime.Now.ToLongTimeString() + " : " + WakaTime.NativeName + " : " + Logger.LEVELS[level] + " : " + msg);
                     writer.Flush();
                     writer.Close();
                 }
@@ -58,10 +58,10 @@ namespace WakaTime
         private static StreamWriter Setup()
         {
             StreamWriter writer = null;
-            string userHomeDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            if (string.IsNullOrWhiteSpace(userHomeDir) == false)
+            string configDir = WakaTime.GetConfigDir();
+            if (string.IsNullOrWhiteSpace(configDir) == false)
             {
-                string filename = userHomeDir + "\\" + "notepadpp-wakatime.log";
+                string filename = configDir + "\\" + WakaTime.NativeName + ".log";
                 writer = new StreamWriter(File.Open(filename, FileMode.Append, FileAccess.Write));
             }
             return writer;

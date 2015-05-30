@@ -70,6 +70,7 @@
     </Compile>
     <Compile Include="Downloader.cs" />
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="RunProcess.cs" />
     <Compile Include="WakaTime.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="NppPluginNETBase.cs" />
