@@ -2,6 +2,19 @@
 History
 -------
 
+
+2.0.1 (2015-08-04)
+++++++++++++++++++
+
+- upgrade wakatime cli to v4.1.0
+- correct priority for project detection
+- fix offline logging
+- limit language detection to known file extensions, unless file contents has a vim modeline
+- guess language using multiple methods, then use most accurate guess
+- use entity and type for new heartbeats api resource schema
+- correctly log message from py.warnings module
+
+
 2.0.0 (2015-05-30)
 ++++++++++++++++++
 
