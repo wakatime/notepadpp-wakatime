@@ -16,7 +16,7 @@ namespace WakaTime
     {
         #region Fields
         internal const string NativeName = "WakaTime";
-        private const string CurrentWakaTimeCLIVersion = "4.0.13"; // https://github.com/wakatime/wakatime/blob/master/HISTORY.rst
+        private const string CurrentWakaTimeCLIVersion = "4.1.0"; // https://github.com/wakatime/wakatime/blob/master/HISTORY.rst
         private const string _cliUrl = "https://github.com/wakatime/wakatime/archive/master.zip";
         private static string _version = CoreAssembly.Version.Major.ToString() + '.' + CoreAssembly.Version.Minor.ToString() + '.' + CoreAssembly.Version.Build.ToString();
         internal const string UserAgent = "notepadpp-wakatime";
