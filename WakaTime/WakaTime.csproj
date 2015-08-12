@@ -60,16 +60,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Config.cs" />
     <Compile Include="DllExport\DllExportAttribute.cs" />
-    <Compile Include="ApiKeyForm.cs">
+    <Compile Include="Forms\ApiKeyForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="ApiKeyForm.Designer.cs">
+    <Compile Include="Forms\ApiKeyForm.Designer.cs">
       <DependentUpon>ApiKeyForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Downloader.cs" />
+    <Compile Include="Forms\SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="NativeMethods.cs" />
+    <Compile Include="ProcessorArchitectureHelper.cs" />
+    <Compile Include="PythonCliParameters.cs" />
+    <Compile Include="PythonManager.cs" />
     <Compile Include="RunProcess.cs" />
     <Compile Include="WakaTime.cs" />
     <Compile Include="Logger.cs" />
@@ -82,10 +90,15 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UnmanagedExports.cs" />
+    <Compile Include="WakaTimeConfigFile.cs" />
+    <Compile Include="WakaTimeConstants.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ApiKeyForm.resx">
+    <EmbeddedResource Include="Forms\ApiKeyForm.resx">
       <DependentUpon>ApiKeyForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
