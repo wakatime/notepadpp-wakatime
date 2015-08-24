@@ -40,7 +40,7 @@ namespace WakaTime
 
             try
             {
-                Logger.Debug(string.Format("Initializing WakaTime v{0}", _version));
+                Logger.Info(string.Format("Initializing WakaTime v{0}", _version));
 
                 _editorVersion = (int)Win32.SendMessage(PluginBase.NppData._nppHandle, NppMsg.NPPM_GETNPPVERSION, 0, 0);
                 _settingsForm = new SettingsForm();
