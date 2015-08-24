@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace WakaTime
@@ -11,6 +12,15 @@ namespace WakaTime
         internal const string PluginName = "notepadpp-wakatime";
         internal const string EditorName = "notepadpp";
         internal const string CliFolder = @"wakatime-master\wakatime\cli.py";
+        internal static string UserConfigDir = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+
+        internal static Func<string> PluginDir = () =>
+        {
+            var pluginConfigDir = new StringBuilder(Win32.MAX_PATH);
+            Win32.SendMessage(PluginBase.NppData._nppHandle, NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, pluginConfigDir);
+            return pluginConfigDir.ToString();
+        };
+
         internal static Func<string> CurrentWakaTimeCliVersion = () =>
         {
             var regex = new Regex(@"(__version_info__ = )(\(( ?\'[0-9]\'\,?){3}\))");

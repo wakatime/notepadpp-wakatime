@@ -55,18 +55,18 @@ namespace WakaTime
                 if (!PythonManager.IsPythonInstalled())
                 {
                     var url = PythonManager.PythonDownloadUrl;
-                    Downloader.DownloadPython(url, GetConfigDir());
+                    Downloader.DownloadPython(url, WakaTimeConstants.UserConfigDir);
                 }
 
                 if (!DoesCliExist() || !IsCliLatestVersion())
                 {
                     try
                     {
-                        Directory.Delete(string.Format("{0}\\wakatime-master", GetConfigDir()), true);
+                        Directory.Delete(string.Format("{0}\\wakatime-master", WakaTimeConstants.UserConfigDir), true);
                     }
                     catch { /* ignored */ }
 
-                    Downloader.DownloadCli(WakaTimeConstants.CliUrl, GetConfigDir());
+                    Downloader.DownloadCli(WakaTimeConstants.CliUrl, WakaTimeConstants.UserConfigDir);
                 }
 
                 GetSettings();
@@ -156,14 +156,7 @@ namespace WakaTime
         public static bool EnoughTimePassed()
         {
             return _lastHeartbeat < DateTime.UtcNow.AddMinutes(-1);
-        }
-
-        public static string GetConfigDir()
-        {
-            var pluginConfigDir = new StringBuilder(Win32.MAX_PATH);
-            Win32.SendMessage(PluginBase.NppData._nppHandle, NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, pluginConfigDir);
-            return pluginConfigDir.ToString();
-        }
+        }        
 
         public static void SendHeartbeat(string fileName, bool isWrite)
         {
