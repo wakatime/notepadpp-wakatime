@@ -181,19 +181,7 @@ namespace WakaTime
             }
             else
                 Logger.Error("Could not send heartbeat because python is not installed");
-        }
-
-        public static bool InternalCheckIsWow64()
-        {
-            if ((Environment.OSVersion.Version.Major != 5 || Environment.OSVersion.Version.Minor < 1) &&
-                Environment.OSVersion.Version.Major < 6) return false;
-
-            using (var p = Process.GetCurrentProcess())
-            {
-                bool retVal;
-                return NativeMethods.IsWow64Process(p.Handle, out retVal) && retVal;
-            }
-        }
+        }        
 
         private static bool DoesCliExist()
         {
