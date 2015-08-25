@@ -3,6 +3,20 @@ History
 -------
 
 
+2.0.2 (2015-08-25)
+++++++++++++++++++
+
+- upgrade wakatime cli to v4.1.1
+- send hostname in X-Machine-Name header
+- catch exceptions from pygments.modeline.get_filetype_from_buffer
+- upgrade requests package to v2.7.0
+- handle non-ASCII characters in import path on Windows, won't fix for Python2
+- upgrade argparse to v1.3.0
+- move language translations to api server
+- move extension rules to api server
+- detect correct header file language based on presence of .cpp or .c files named the same as the .h file
+
+
 2.0.1 (2015-08-04)
 ++++++++++++++++++
 

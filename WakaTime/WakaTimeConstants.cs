@@ -41,6 +41,7 @@ namespace WakaTime
                 var match2 = regexVersion.Matches(grp1.Value);
 
                 return string.Format("{0}.{1}.{2}", match2[0].Value, match2[1].Value, match2[2].Value);
+            }
             catch (Exception ex)
             {
                 Logger.Error("Exception when checking current wakatime cli version: ", ex);
