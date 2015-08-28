@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using WakaTime.Forms;
@@ -33,9 +31,10 @@ namespace WakaTime
         private static readonly object ThreadLock = new object();
         #endregion
 
-        #region StartUp/CleanUp
+        #region StartUp/CleanUp       
+
         internal static void CommandMenuInit()
-        {
+        {            
             _version = string.Format("{0}.{1}.{2}", CoreAssembly.Version.Major, CoreAssembly.Version.Minor, CoreAssembly.Version.Build);
 
             try
@@ -51,23 +50,7 @@ namespace WakaTime
                 _iniFilePath = sbIniFilePath.ToString();
                 if (!Directory.Exists(_iniFilePath)) Directory.CreateDirectory(_iniFilePath);
 
-                // Make sure python is installed
-                if (!PythonManager.IsPythonInstalled())
-                {
-                    var url = PythonManager.PythonDownloadUrl;
-                    Downloader.DownloadPython(url, WakaTimeConstants.UserConfigDir);
-                }
-
-                if (!DoesCliExist() || !IsCliLatestVersion())
-                {
-                    try
-                    {
-                        Directory.Delete(string.Format("{0}\\wakatime-master", WakaTimeConstants.UserConfigDir), true);
-                    }
-                    catch { /* ignored */ }
-
-                    Downloader.DownloadCli(WakaTimeConstants.CliUrl, WakaTimeConstants.UserConfigDir);
-                }
+                Task.Run(() => { InitializeWakaTimeAsync(); });                
 
                 GetSettings();
 
@@ -85,6 +68,27 @@ namespace WakaTime
                 Logger.Error("Error initializing Wakatime", ex);
             }
         }
+
+        private static void InitializeWakaTimeAsync()
+        {
+            // Make sure python is installed
+            if (!PythonManager.IsPythonInstalled())
+            {
+                var url = PythonManager.PythonDownloadUrl;
+                Downloader.DownloadPython(url, WakaTimeConstants.UserConfigDir);
+            }
+
+            if (DoesCliExist() && IsCliLatestVersion()) return;
+
+            try
+            {
+                Directory.Delete(string.Format("{0}\\wakatime-master", WakaTimeConstants.UserConfigDir), true);
+            }
+            catch { /* ignored */ }
+
+            Downloader.DownloadCli(WakaTimeConstants.CliUrl, WakaTimeConstants.UserConfigDir);
+        }
+
         internal static void SetToolBarIcon()
         {
             var tbIcons = new toolbarIcons { hToolbarBmp = TbBmp.GetHbitmap() };
@@ -139,7 +143,7 @@ namespace WakaTime
             var currentFile = GetCurrentFile();
             if (currentFile == null) return;
 
-            Task.Factory.StartNew(() =>
+            Task.Run(() =>
             {
                 lock (ThreadLock)
                 {
@@ -156,7 +160,7 @@ namespace WakaTime
         public static bool EnoughTimePassed()
         {
             return _lastHeartbeat < DateTime.UtcNow.AddMinutes(-1);
-        }        
+        }
 
         public static void SendHeartbeat(string fileName, bool isWrite)
         {
@@ -181,7 +185,7 @@ namespace WakaTime
             }
             else
                 Logger.Error("Could not send heartbeat because python is not installed");
-        }        
+        }
 
         private static bool DoesCliExist()
         {
