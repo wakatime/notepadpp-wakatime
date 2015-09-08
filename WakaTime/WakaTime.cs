@@ -31,10 +31,10 @@ namespace WakaTime
         private static readonly object ThreadLock = new object();
         #endregion
 
-        #region StartUp/CleanUp       
+        #region StartUp/CleanUp
 
         internal static void CommandMenuInit()
-        {            
+        {
             _version = string.Format("{0}.{1}.{2}", CoreAssembly.Version.Major, CoreAssembly.Version.Minor, CoreAssembly.Version.Build);
 
             try
@@ -50,7 +50,7 @@ namespace WakaTime
                 _iniFilePath = sbIniFilePath.ToString();
                 if (!Directory.Exists(_iniFilePath)) Directory.CreateDirectory(_iniFilePath);
 
-                Task.Run(() => { InitializeWakaTimeAsync(); });                
+                Task.Run(() => { InitializeWakaTimeAsync(); });
 
                 GetSettings();
 
@@ -72,10 +72,18 @@ namespace WakaTime
         private static void InitializeWakaTimeAsync()
         {
             // Make sure python is installed
-            if (!PythonManager.IsPythonInstalled())
+            if (!PythonManager.IsPythonInstalled())            
             {
-                var url = PythonManager.PythonDownloadUrl;
-                Downloader.DownloadPython(url, WakaTimeConstants.UserConfigDir);
+                var dialogResult = MessageBox.Show(@"Let's download and install Python now?", @"WakaTime requires Python", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (dialogResult == DialogResult.Yes)
+                {
+                    var url = PythonManager.PythonDownloadUrl;
+                    Downloader.DownloadPython(url, WakaTimeConstants.UserConfigDir);
+                }
+                else
+                    MessageBox.Show(
+                        @"Please install Python (https://www.python.org/downloads/) and restart Visual Studio to enable the WakaTime plugin.",
+                        @"WakaTime", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             if (DoesCliExist() && IsCliLatestVersion()) return;
@@ -182,6 +190,9 @@ namespace WakaTime
                 }
                 else
                     process.RunInBackground();
+
+                if (!process.Success)
+                    Logger.Error(string.Format("Could not send heartbeat: {0}", process.Error));
             }
             else
                 Logger.Error("Could not send heartbeat because python is not installed");
