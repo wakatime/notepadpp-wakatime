@@ -7,11 +7,13 @@ Notepad++ plugin to quantify your coding.
 Installation
 ------------
 
-1. Download the plugin [WakaTime.dll](https://github.com/wakatime/notepadpp-wakatime/releases/download/3.0.0/notepadpp-wakatime-3.0.0.zip).
+1. Inside Notepad++ open the Plugin Manager (`Plugins` -> `Plugin Manager` -> `Show Plugin Manager`).
 
-2. Copy WakaTime.dll to your Notepad++ plugins folder at `C:\Program Files\Notepad++\plugins`.
+2. Check the box next to `WakaTime` in the list of plugins.
 
-3. Create a `allowAppDataPlugins.xml` file in your `C:\Program Files\Notepad++` directory.
+![Project Overview](./img/plugin-install.png)
+
+3. Click the `Install` button.
 
 4. Restart Notepad++.
 
@@ -31,4 +33,8 @@ Screen Shots
 Troubleshooting
 ---------------
 
-See https://github.com/wakatime/wakatime#troubleshooting
+WakaTime logs to `C:\Users\<user>\AppData\Roaming\Notepad++\plugins\config\WakaTime.log` by default.
+
+Turn on debug mode (click the WakaTime icon in Notepad++) then check your log file.
+
+See https://github.com/wakatime/wakatime#troubleshooting for troubleshooting wakatime-cli problems.
