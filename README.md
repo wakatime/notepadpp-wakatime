@@ -1,7 +1,7 @@
 notepadpp-wakatime
 =====================
 
-Notepad++ plugin to quantify your coding.
+Metrics, insights, and time tracking automatically generated from your programming activity.
 
 
 Installation
