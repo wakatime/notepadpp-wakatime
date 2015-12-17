@@ -7,7 +7,7 @@ namespace WakaTime
 {
     static class PythonManager
     {
-        private const string CurrentPythonVersion = "3.4.3";
+        private const string CurrentPythonVersion = "3.5.0";
         private static string PythonBinaryLocation { get; set; }
 
         internal static bool IsPythonInstalled()
@@ -17,22 +17,29 @@ namespace WakaTime
 
         internal static string GetPython()
         {
-            if (PythonBinaryLocation != null)
-                return PythonBinaryLocation;
+            if (PythonBinaryLocation == null)
+                PythonBinaryLocation = GetEmbeddedPath();
 
-            var path = GetPathFromMicrosoftRegister() ?? GetPathFromFixedPath();
+            if (PythonBinaryLocation == null)
+                PythonBinaryLocation = GetPathFromMicrosoftRegistry();
 
-            PythonBinaryLocation = path;
+            if (PythonBinaryLocation == null)
+                PythonBinaryLocation = GetPathFromFixedPath();
 
-            return path;
+            return PythonBinaryLocation;
         }
 
-        static string GetPathFromMicrosoftRegister()
+        static string GetPathFromMicrosoftRegistry()
         {
             try
             {
                 var regex = new Regex(@"""([^""]*)\\([^""\\]+(?:\.[^"".\\]+))""");
                 var pythonKey = Registry.ClassesRoot.OpenSubKey(@"Python.File\shell\open\command");
+                if (pythonKey == null)
+                {
+                    Logger.Debug("Couldn't find python's path through Microsft Registry. Please try repairing your Python installation.");
+                    return null;
+                }
                 var python = pythonKey.GetValue(null).ToString();
                 var match = regex.Match(python);
 
@@ -47,13 +54,13 @@ namespace WakaTime
                 if (!process.Success)
                     return null;
 
-                Logger.Debug(string.Format("Python found by Microsoft Register: {0}", fullPath));
+                Logger.Debug(string.Format("Python found from Microsoft Registry: {0}", fullPath));
 
                 return fullPath;
             }
             catch (Exception ex)
             {
-                Logger.Error("GetPathFromMicrosoftRegister:", ex);
+                Logger.Error("GetPathFromMicrosoftRegistry:", ex);
                 return null;
             }
         }
@@ -124,18 +131,37 @@ namespace WakaTime
             return null;
         }
 
+        internal static string GetEmbeddedPath()
+        {
+            var path = Path.Combine(WakaTimeConstants.PluginConfigDir, "python", "pythonw");
+            try
+            {
+                var process = new RunProcess(path, "--version");
+
+                process.Run();
+
+                if (!process.Success)
+                    return null;
+
+                Logger.Debug(string.Format("Python found from embedded location: {0}", path));
+
+                return path;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("GetEmbeddedPath:", ex);
+                return null;
+            }
+        }
+
         internal static string PythonDownloadUrl
         {
             get
             {
-                var url = string.Format("https://www.python.org/ftp/python/{0}/python-{0}", CurrentPythonVersion);
-
+                var arch = "win32";
                 if (ProcessorArchitectureHelper.Is64BitOperatingSystem)
-                    url = url + ".amd64";
-
-                url = url + ".msi";
-
-                return url;
+                    arch = "amd64";
+                return string.Format("https://www.python.org/ftp/python/{0}/python-{0}-embed-{1}.zip", CurrentPythonVersion, arch);
             }
         }
     }

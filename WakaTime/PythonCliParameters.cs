@@ -1,7 +1,6 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace WakaTime
 {
@@ -9,18 +8,13 @@ namespace WakaTime
     {
         public string Cli
         {
-            get
-            {
-                var pluginConfigDir = new StringBuilder(Win32.MAX_PATH);
-                Win32.SendMessage(PluginBase.NppData._nppHandle, NppMsg.NPPM_GETPLUGINSCONFIGDIR, Win32.MAX_PATH, pluginConfigDir);
-                return Path.Combine(pluginConfigDir.ToString(), WakaTimeConstants.CliFolder);                               
-            }
+            get { return Path.Combine(WakaTimeConstants.PluginConfigDir, WakaTimeConstants.CliFolder); }
         }
         public string Key { get; set; }
         public string File { get; set; }
         public string Plugin { get; set; }
         public bool IsWrite { get; set; }
-        public string Project { get; set; }        
+        public string Project { get; set; }
 
         public string[] ToArray(bool obfuscate = false)
         {
@@ -28,7 +22,7 @@ namespace WakaTime
             {
                 Cli,
                 "--key",
-                obfuscate ? string.Format("********-****-****-****-********{0}", Key.Substring(Key.Length - 4)) : Key,
+                obfuscate ? string.Format("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX{0}", Key.Substring(Key.Length - 4)) : Key,
                 "--file",
                 File,
                 "--plugin",

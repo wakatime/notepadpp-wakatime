@@ -50,7 +50,7 @@ namespace WakaTime
 
         private static StreamWriter Setup()
         {
-            var configDir = WakaTimeConstants.PluginDir();
+            var configDir = WakaTimeConstants.PluginConfigDir;
             if (string.IsNullOrWhiteSpace(configDir)) return null;
 
             var filename = string.Format("{0}\\{1}.log", configDir, WakaTimeConstants.NativeName);
