@@ -3,6 +3,15 @@ History
 -------
 
 
+3.0.0 (2015-12-17)
+++++++++++++++++++
+
+- use embedded python instead of installing
+- remove prompt before installing Python because using embeddable Python now
+- prevent locking inside background thread
+- better looking obfuscated api key
+
+
 2.0.3 (2015-08-27)
 ++++++++++++++++++
 
