@@ -33,8 +33,10 @@ Screen Shots
 Troubleshooting
 ---------------
 
-WakaTime logs to `C:\Users\<user>\AppData\Roaming\Notepad++\plugins\config\WakaTime.log` by default.
+WakaTime for Notepad++ logs to `C:\Users\<user>\AppData\Roaming\Notepad++\plugins\config\WakaTime.log`.
 
 Turn on debug mode (click the WakaTime icon in Notepad++) then check your log file.
 
-See https://github.com/wakatime/wakatime#troubleshooting for troubleshooting wakatime-cli problems.
+WakaTime Core logs to `C:\Users\<user>\.wakatime.log`. Check there after looking in your Notepad++ WakaTime.log file.
+
+More help can be found at https://github.com/wakatime/wakatime#troubleshooting.
