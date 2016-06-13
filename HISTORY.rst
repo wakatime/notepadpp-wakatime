@@ -3,6 +3,16 @@ History
 -------
 
 
+3.0.1 (2016-06-13)
+++++++++++++++++++
+
+- Refactor plugin using code from wakatime/visualstudio-wakatime.
+- Prevent deleting wakatime-core when IDE started while offline.
+- Queue heartbeats before sending to wakatime-cli to prevent from forking too many python processes.
+- Improved dependency management and moved dependencies to AppDataWakaTime folder.
+- Millisecond precision for heartbeat timestamps.
+
+
 3.0.0 (2015-12-17)
 ++++++++++++++++++
 
