@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace WakaTime
     {
         private readonly string _program;
         private readonly string[] _arguments;
+        private string _stdin;
         private bool _captureOutput;
 
         internal RunProcess(string program, params string[] arguments)
@@ -24,6 +26,19 @@ namespace WakaTime
             Run();
         }
 
+        internal void RunInBackground(string stdin)
+        {
+            _captureOutput = false;
+            _stdin = stdin;
+            Run();
+        }
+
+        internal void Run(string stdin)
+        {
+            _stdin = stdin;
+            Run();
+        }
+
         internal string Output { get; private set; }
 
         internal string Error { get; private set; }
@@ -33,7 +48,7 @@ namespace WakaTime
             get { return Exception == null; }
         }
 
-        internal Exception Exception { get; private set; }
+        internal Exception Exception { get; private set; }        
 
         internal void Run()
         {
@@ -44,13 +59,20 @@ namespace WakaTime
                     UseShellExecute = false,
                     RedirectStandardError = _captureOutput,
                     RedirectStandardOutput = _captureOutput,
+                    RedirectStandardInput = _stdin != null,
                     FileName = _program,
                     CreateNoWindow = true,
                     Arguments = GetArgumentString()
                 };
-
+                
                 using (var process = Process.Start(procInfo))
                 {
+
+                    if (_stdin != null)
+                    {
+                        process.StandardInput.WriteLine(string.Format("{0}\n", _stdin));
+                    }
+
                     if (_captureOutput)
                     {
                         var stdOut = new StringBuilder();

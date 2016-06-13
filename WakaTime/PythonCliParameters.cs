@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -6,15 +7,17 @@ namespace WakaTime
 {
     internal class PythonCliParameters
     {
-        public string Cli
+        private string Cli
         {
-            get { return Path.Combine(WakaTimeConstants.PluginConfigDir, WakaTimeConstants.CliFolder); }
+            get { return Dependencies.CliLocation; }
         }
         public string Key { get; set; }
         public string File { get; set; }
+        public string Time { get; set; }
         public string Plugin { get; set; }
         public bool IsWrite { get; set; }
         public string Project { get; set; }
+        public bool HasExtraHeartbeats { get; set; }
 
         public string[] ToArray(bool obfuscate = false)
         {
@@ -23,8 +26,10 @@ namespace WakaTime
                 Cli,
                 "--key",
                 obfuscate ? string.Format("XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXX{0}", Key.Substring(Key.Length - 4)) : Key,
-                "--file",
+                "--entity",
                 File,
+                "--time",
+                Time.ToString(),
                 "--plugin",
                 Plugin
             };
@@ -38,6 +43,9 @@ namespace WakaTime
                 parameters.Add("--project");
                 parameters.Add(Project);
             }
+            
+            if (HasExtraHeartbeats)
+                parameters.Add("--extra-heartbeats");
 
             return parameters.ToArray();
         }

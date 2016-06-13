@@ -16,7 +16,7 @@ namespace WakaTime
         static void setInfo(NppData notepadPlusData)
         {
             PluginBase.NppData = notepadPlusData;
-            WakaTime.CommandMenuInit();
+            WakaTimePackage.CommandMenuInit();
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
@@ -37,7 +37,7 @@ namespace WakaTime
         static IntPtr getName()
         {
             if (_ptrPluginName == IntPtr.Zero)
-                _ptrPluginName = Marshal.StringToHGlobalUni(WakaTimeConstants.NativeName);
+                _ptrPluginName = Marshal.StringToHGlobalUni(Constants.NativeName);
             return _ptrPluginName;
         }
 
@@ -48,24 +48,24 @@ namespace WakaTime
             if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
             {
                 PluginBase.FuncItems.RefreshItems();
-                WakaTime.SetToolBarIcon();
+                WakaTimePackage.SetToolBarIcon();
             }
             else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
             {
-                WakaTime.PluginCleanUp();
+                WakaTimePackage.PluginCleanUp();
                 Marshal.FreeHGlobal(_ptrPluginName);
             }
             else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED)
             {
-                WakaTime.HandleActivity(true);
+                WakaTimePackage.HandleActivity(WakaTimePackage.GetCurrentFile(), true);
             }
             else if (nc.nmhdr.code == (uint)SciMsg.SCI_ADDTEXT)
             {
-                WakaTime.HandleActivity(false);
+                WakaTimePackage.HandleActivity(WakaTimePackage.GetCurrentFile(), false);
             }
             else if (nc.nmhdr.code == (uint)SciMsg.SCI_INSERTTEXT)
             {
-                WakaTime.HandleActivity(false);
+                WakaTimePackage.HandleActivity(WakaTimePackage.GetCurrentFile(), false);
             }
         }
     }
