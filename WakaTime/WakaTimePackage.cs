@@ -20,6 +20,8 @@ namespace WakaTime
     class WakaTimePackage
     {
         #region Fields
+        internal const string NativeName = Constants.NativeName;
+        
         private static ConfigFile _wakaTimeConfigFile;
         private static SettingsForm _settingsForm;
 
@@ -38,11 +40,9 @@ namespace WakaTime
 
         private static ConcurrentQueue<Heartbeat> heartbeatQueue = new ConcurrentQueue<Heartbeat>();
         private static System.Timers.Timer timer = new System.Timers.Timer();
-
         #endregion
 
         #region StartUp/CleanUp
-
         internal static void CommandMenuInit()
         {
             Task.Run(() =>
@@ -57,10 +57,6 @@ namespace WakaTime
             try
             {
                 Logger.Info(string.Format("Initializing WakaTime v{0}", Constants.PluginVersion));
-
-                // add menu item
-                PluginBase.SetCommand(0, "Wakatime Settings", SettingsPopup, new ShortcutKey(false, false, false, Keys.None));
-                _idMyDlg = 0;
 
                 // Settings Form
                 _settingsForm = new SettingsForm();
@@ -100,6 +96,10 @@ namespace WakaTime
                 timer.Interval = 1000 * 8;
                 timer.Elapsed += ProcessHeartbeats;
                 timer.Start();
+
+                // add menu item
+                PluginBase.SetCommand(0, "Wakatime Settings", SettingsPopup, new ShortcutKey(false, false, false, Keys.None));
+                _idMyDlg = 0;
 
                 Logger.Info(string.Format("Finished initializing WakaTime v{0}", Constants.PluginVersion));
             }
