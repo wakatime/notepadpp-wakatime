@@ -60,6 +60,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigFile.cs" />
+    <Compile Include="Constants.cs" />
+    <Compile Include="Dependencies.cs" />
     <Compile Include="DllExport\DllExportAttribute.cs" />
     <Compile Include="Forms\ApiKeyForm.cs">
       <SubType>Form</SubType>
@@ -77,9 +80,7 @@
     <Compile Include="NativeMethods.cs" />
     <Compile Include="ProcessorArchitectureHelper.cs" />
     <Compile Include="PythonCliParameters.cs" />
-    <Compile Include="PythonManager.cs" />
     <Compile Include="RunProcess.cs" />
-    <Compile Include="WakaTime.cs" />
     <Compile Include="Logger.cs" />
     <Compile Include="NppPluginNETBase.cs" />
     <Compile Include="NppPluginNETHelper.cs" />
@@ -90,8 +91,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="UnmanagedExports.cs" />
-    <Compile Include="WakaTimeConfigFile.cs" />
-    <Compile Include="WakaTimeConstants.cs" />
+    <Compile Include="WakaTimePackage.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Forms\ApiKeyForm.resx">
