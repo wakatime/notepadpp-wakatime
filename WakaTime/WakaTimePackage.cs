@@ -3,13 +3,17 @@ using System.Drawing;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using System.Text;
-using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Forms;
 using WakaTime.Forms;
 using WakaTime.Properties;
 using System.Net;
-using System.Text.RegularExpressions;
+using Task = System.Threading.Tasks.Task;
+using System.Collections.Concurrent;
+using System.Collections;
+using System.Web.Script.Serialization;
 
 namespace WakaTime
 {
