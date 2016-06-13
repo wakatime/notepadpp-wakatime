@@ -13,9 +13,8 @@ namespace WakaTime
         internal static string EditorVersion {
             get
             {
-                if (WakaTimePackage.ObjDte == null)
-                    return string.Empty;
-                return WakaTimePackage.ObjDte.Version;
+                var ver = (int)Win32.SendMessage(PluginBase.NppData._nppHandle, NppMsg.NPPM_GETNPPVERSION, 0, 0);
+                return ver.ToString();
             }
         }
 

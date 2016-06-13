@@ -20,7 +20,7 @@ namespace WakaTime
                 return string.Format("https://www.python.org/ftp/python/{0}/python-{0}-embed-{1}.zip", CurrentPythonVersion, arch);
             }
         }
-        private static string AppDataDirectory {
+        public static string AppDataDirectory {
             get
             {
                 string roamingFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);

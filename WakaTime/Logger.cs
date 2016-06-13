@@ -15,7 +15,7 @@ namespace WakaTime
     {        
         internal static void Debug(string msg)
         {
-            if (!WakaTime.Debug)
+            if (!WakaTimePackage.Debug)
                 return;
 
             Log(LogLevel.Debug, msg);
@@ -50,10 +50,10 @@ namespace WakaTime
 
         private static StreamWriter Setup()
         {
-            var configDir = WakaTimeConstants.PluginConfigDir;
+            var configDir = Dependencies.AppDataDirectory;
             if (string.IsNullOrWhiteSpace(configDir)) return null;
 
-            var filename = string.Format("{0}\\{1}.log", configDir, WakaTimeConstants.NativeName);
+            var filename = string.Format("{0}\\{1}.log", configDir, Constants.NativeName);
             var writer = new StreamWriter(File.Open(filename, FileMode.Append, FileAccess.Write));
             return writer;
         }        

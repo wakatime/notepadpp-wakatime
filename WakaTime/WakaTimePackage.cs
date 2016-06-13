@@ -5,7 +5,6 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Text;
-using System.Timers;
 using System.Windows.Forms;
 using WakaTime.Forms;
 using WakaTime.Properties;
@@ -13,6 +12,7 @@ using System.Net;
 using Task = System.Threading.Tasks.Task;
 using System.Collections.Concurrent;
 using System.Collections;
+using System.Timers;
 using System.Web.Script.Serialization;
 
 namespace WakaTime
@@ -37,7 +37,7 @@ namespace WakaTime
         public static string Proxy;
 
         private static ConcurrentQueue<Heartbeat> heartbeatQueue = new ConcurrentQueue<Heartbeat>();
-        private static Timer timer = new Timer();
+        private static System.Timers.Timer timer = new System.Timers.Timer();
 
         #endregion
 
@@ -51,7 +51,7 @@ namespace WakaTime
             });
         }
 
-        public void InitializeAsync()
+        private static void InitializeAsync()
         {
 
             try
@@ -143,7 +143,7 @@ namespace WakaTime
                     : null;
         }
 
-        private void HandleActivity(string currentFile, bool isWrite)
+        public static void HandleActivity(string currentFile, bool isWrite)
         {
             if (currentFile == null)
                 return;
@@ -167,12 +167,11 @@ namespace WakaTime
                 h.entity = fileName;
                 h.timestamp = ToUnixEpoch(time);
                 h.is_write = isWrite;
-                h.project = GetProjectName();
                 heartbeatQueue.Enqueue(h);
             });
         }
 
-        private void ProcessHeartbeats(object sender, ElapsedEventArgs e)
+        private static void ProcessHeartbeats(object sender, ElapsedEventArgs e)
         {
             Task.Run(() =>
             {
@@ -180,7 +179,7 @@ namespace WakaTime
             });
         }
 
-        private void ProcessHeartbeats()
+        private static void ProcessHeartbeats()
         {
             var pythonBinary = Dependencies.GetPython();
             if (pythonBinary != null)
@@ -203,7 +202,6 @@ namespace WakaTime
                 PythonCliParameters.File = heartbeat.entity;
                 PythonCliParameters.Time = heartbeat.timestamp;
                 PythonCliParameters.IsWrite = heartbeat.is_write;
-                PythonCliParameters.Project = heartbeat.project;
                 PythonCliParameters.HasExtraHeartbeats = hasExtraHeartbeats;
 
                 string extraHeartbeatsJSON = null;
@@ -236,7 +234,7 @@ namespace WakaTime
                 Logger.Error("Could not send heartbeat because python is not installed");
         }
 
-        private bool EnoughTimePassed(DateTime now)
+        private static bool EnoughTimePassed(DateTime now)
         {
             return _lastHeartbeat < now.AddMinutes(-1 * heartbeatFrequency);
         }
@@ -264,15 +262,6 @@ namespace WakaTime
         private static void SettingsPopup()
         {
             _settingsForm.ShowDialog();
-        }
-
-        private static string GetProjectName()
-        {
-            return !string.IsNullOrEmpty(_solutionName)
-                ? Path.GetFileNameWithoutExtension(_solutionName)
-                : (ObjDte.Solution != null && !string.IsNullOrEmpty(ObjDte.Solution.FullName))
-                    ? Path.GetFileNameWithoutExtension(ObjDte.Solution.FullName)
-                    : string.Empty;
         }
 
         private static string ToUnixEpoch(DateTime date)
