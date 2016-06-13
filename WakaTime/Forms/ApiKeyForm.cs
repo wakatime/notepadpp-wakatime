@@ -5,13 +5,13 @@ namespace WakaTime.Forms
 {
     public partial class ApiKeyForm : Form
     {
-        private readonly WakaTimeConfigFile _wakaTimeConfigFile;
+        private readonly ConfigFile _wakaTimeConfigFile;        
 
         public ApiKeyForm()
-        {
+        {            
             InitializeComponent();
 
-            _wakaTimeConfigFile = new WakaTimeConfigFile();
+            _wakaTimeConfigFile = new ConfigFile();
         }
 
         private void ApiKeyForm_Load(object sender, EventArgs e)
@@ -23,9 +23,9 @@ namespace WakaTime.Forms
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-            }
+            }            
         }
-
+        
         private void btnOk_Click(object sender, EventArgs e)
         {
             try
@@ -36,7 +36,7 @@ namespace WakaTime.Forms
                 {
                     _wakaTimeConfigFile.ApiKey = apiKey.ToString();
                     _wakaTimeConfigFile.Save();
-                    WakaTime.ApiKey = apiKey.ToString();
+                    WakaTimePackage.ApiKey = apiKey.ToString();
                 }
                 else
                 {
@@ -49,6 +49,5 @@ namespace WakaTime.Forms
                 MessageBox.Show(ex.Message);
             }
         }
-
     }
 }

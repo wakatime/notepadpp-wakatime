@@ -5,14 +5,14 @@ namespace WakaTime.Forms
 {
     public partial class SettingsForm : Form
     {
-        private readonly WakaTimeConfigFile _wakaTimeConfigFile;
+        private readonly ConfigFile _wakaTimeConfigFile;
         internal event EventHandler ConfigSaved;
 
         public SettingsForm()
         {
             InitializeComponent();
 
-            _wakaTimeConfigFile = new WakaTimeConfigFile();            
+            _wakaTimeConfigFile = new ConfigFile();
         }
 
         private void SettingsForm_Load(object sender, EventArgs e)
@@ -35,7 +35,8 @@ namespace WakaTime.Forms
             try
             {
                 Guid apiKey;
-                var parse = Guid.TryParse(txtAPIKey.Text.Trim(), out apiKey);                              
+                var parse = Guid.TryParse(txtAPIKey.Text.Trim(), out apiKey);         
+                                     
                 if (parse)
                 {
                     _wakaTimeConfigFile.ApiKey = apiKey.ToString();
@@ -61,6 +62,11 @@ namespace WakaTime.Forms
         {
             var handler = ConfigSaved;
             if (handler != null) handler(this, EventArgs.Empty);
+        }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
