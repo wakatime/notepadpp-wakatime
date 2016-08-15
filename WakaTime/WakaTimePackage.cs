@@ -117,31 +117,62 @@ namespace WakaTime
             Marshal.FreeHGlobal(pTbIcons);
         }
 
+        public static void OnNotification(ScNotification notification)
+        {
+            if (notification.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
+            {
+                WakaTimePackage.HandleActivity(WakaTimePackage.GetCurrentFile(), true);
+            }
+            else if (notification.Header.Code == (uint)SciMsg.SCI_ADDTEXT)
+            {
+                HandleActivity(GetCurrentFile(), false);
+            }
+            else if (notification.Header.Code == (uint)SciMsg.SCI_INSERTTEXT)
+            {
+                HandleActivity(GetCurrentFile(), false);
+            }
+        }
+
         public static void HandleActivity(string currentFile, bool isWrite)
         {
-            if (currentFile == null)
-                return;
+            try
+            {
 
-            DateTime now = DateTime.UtcNow;
+                if (currentFile == null)
+                    return;
 
-            if (!isWrite && _lastFile != null && !EnoughTimePassed(now) && currentFile.Equals(_lastFile))
-                return;
+                DateTime now = DateTime.UtcNow;
 
-            _lastFile = currentFile;
-            _lastHeartbeat = now;
+                if (!isWrite && _lastFile != null && !EnoughTimePassed(now) && currentFile.Equals(_lastFile))
+                    return;
 
-            AppendHeartbeat(currentFile, isWrite, now);
+                _lastFile = currentFile;
+                _lastHeartbeat = now;
+
+                AppendHeartbeat(currentFile, isWrite, now);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error("Error appending heartbeat", ex);
+            }
         }
 
         private static void AppendHeartbeat(string fileName, bool isWrite, DateTime time)
         {
             Task.Run(() =>
             {
-                Heartbeat h = new Heartbeat();
-                h.entity = fileName;
-                h.timestamp = ToUnixEpoch(time);
-                h.is_write = isWrite;
-                heartbeatQueue.Enqueue(h);
+                try
+                {
+                    Heartbeat h = new Heartbeat();
+                    h.entity = fileName;
+                    h.timestamp = ToUnixEpoch(time);
+                    h.is_write = isWrite;
+                    heartbeatQueue.Enqueue(h);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Error appending heartbeat", ex);
+                }
             });
         }
 
@@ -149,7 +180,14 @@ namespace WakaTime
         {
             Task.Run(() =>
             {
-                ProcessHeartbeats();
+                try
+                {
+                    ProcessHeartbeats();
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error("Error processing heartbeats", ex);
+                }
             });
         }
 

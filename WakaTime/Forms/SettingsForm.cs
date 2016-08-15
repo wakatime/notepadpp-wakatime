@@ -19,6 +19,7 @@ namespace WakaTime.Forms
         {
             try
             {
+                _wakaTimeConfigFile.Read();
                 txtAPIKey.Text = _wakaTimeConfigFile.ApiKey;
                 txtProxy.Text = _wakaTimeConfigFile.Proxy;
                 chkDebugMode.Checked = _wakaTimeConfigFile.Debug;

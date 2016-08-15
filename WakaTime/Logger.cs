@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Windows.Forms;
 
 namespace WakaTime
 {
@@ -40,12 +41,19 @@ namespace WakaTime
 
         internal static void Log(LogLevel level, string msg)
         {
-            var writer = Setup();
-            if (writer == null) return;
+            try
+            {
+                var writer = Setup();
+                if (writer == null) return;
 
-            writer.WriteLine("[Wakatime {0} {1}] {2}", Enum.GetName(level.GetType(), level), DateTime.Now.ToString("hh:mm:ss tt"), msg);            
-            writer.Flush();
-            writer.Close();
+                writer.WriteLine("[Wakatime {0} {1}] {2}", Enum.GetName(level.GetType(), level), DateTime.Now.ToString("hh:mm:ss tt"), msg);            
+                writer.Flush();
+                writer.Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "Error writing to WakaTime.log", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            }
         }
 
         private static StreamWriter Setup()
