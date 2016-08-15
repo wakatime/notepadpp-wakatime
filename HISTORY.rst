@@ -3,6 +3,14 @@ History
 -------
 
 
+4.0.0 (2016-08-15)
+++++++++++++++++++
+
+- Fix bug preventing editor events from being handled.
+- Reload settings from config file every time settings menu is displayed.
+- Write all exceptions to C:\Users\%USER%\AppData\Roaming\WakaTime\WakaTime.log file.
+
+
 3.0.2 (2016-08-15)
 ++++++++++++++++++
 
