@@ -1,5 +1,7 @@
-﻿using System;
+﻿// NPP plugin platform for .Net v0.92.83 by Kasper B. Graversen etc.
+using System;
 using System.Runtime.InteropServices;
+using Kbg.NppPluginNET.PluginInfrastructure;
 using NppPlugin.DllExport;
 
 namespace WakaTime
@@ -15,15 +17,15 @@ namespace WakaTime
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void setInfo(NppData notepadPlusData)
         {
-            PluginBase.NppData = notepadPlusData;
+            PluginBase.nppData = notepadPlusData;
             WakaTimePackage.CommandMenuInit();
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static IntPtr getFuncsArray(ref int nbF)
         {
-            nbF = PluginBase.FuncItems.Items.Count;
-            return PluginBase.FuncItems.NativePointer;
+            nbF = PluginBase._funcItems.Items.Count;
+            return PluginBase._funcItems.NativePointer;
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
@@ -37,36 +39,28 @@ namespace WakaTime
         static IntPtr getName()
         {
             if (_ptrPluginName == IntPtr.Zero)
-                _ptrPluginName = Marshal.StringToHGlobalUni(Constants.NativeName);
+                _ptrPluginName = Marshal.StringToHGlobalUni(WakaTimePackage.PluginName);
             return _ptrPluginName;
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void beNotified(IntPtr notifyCode)
         {
-            SCNotification nc = (SCNotification)Marshal.PtrToStructure(notifyCode, typeof(SCNotification));
-            if (nc.nmhdr.code == (uint)NppMsg.NPPN_TBMODIFICATION)
+            ScNotification notification = (ScNotification)Marshal.PtrToStructure(notifyCode, typeof(ScNotification));
+            if (notification.Header.Code == (uint)NppMsg.NPPN_TBMODIFICATION)
             {
-                PluginBase.FuncItems.RefreshItems();
+                PluginBase._funcItems.RefreshItems();
                 WakaTimePackage.SetToolBarIcon();
             }
-            else if (nc.nmhdr.code == (uint)NppMsg.NPPN_SHUTDOWN)
+            else if (notification.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
             {
                 WakaTimePackage.PluginCleanUp();
                 Marshal.FreeHGlobal(_ptrPluginName);
             }
-            else if (nc.nmhdr.code == (uint)NppMsg.NPPN_FILESAVED)
+            /*else
             {
-                WakaTimePackage.HandleActivity(WakaTimePackage.GetCurrentFile(), true);
-            }
-            else if (nc.nmhdr.code == (uint)SciMsg.SCI_ADDTEXT)
-            {
-                WakaTimePackage.HandleActivity(WakaTimePackage.GetCurrentFile(), false);
-            }
-            else if (nc.nmhdr.code == (uint)SciMsg.SCI_INSERTTEXT)
-            {
-                WakaTimePackage.HandleActivity(WakaTimePackage.GetCurrentFile(), false);
-            }
+                WakaTimePackage.OnNotification(notification);
+            }*/
         }
     }
 }

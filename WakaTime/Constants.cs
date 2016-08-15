@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Net;
 using System.Text.RegularExpressions;
+using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace WakaTime
 {
     internal static class Constants
     {
-        internal const string NativeName = "WakaTime";
-        internal const string PluginName = "notepadpp-wakatime";
+        internal const string PluginName = "WakaTime";
+        internal const string PluginKey = "notepadpp-wakatime";
         internal static string PluginVersion = string.Format("{0}.{1}.{2}", WakaTimePackage.CoreAssembly.Version.Major, WakaTimePackage.CoreAssembly.Version.Minor, WakaTimePackage.CoreAssembly.Version.Build);
         internal const string EditorName = "notepadpp";
         internal static string EditorVersion {
             get
             {
-                var ver = (int)Win32.SendMessage(PluginBase.NppData._nppHandle, NppMsg.NPPM_GETNPPVERSION, 0, 0);
+                var ver = (int)Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_GETNPPVERSION, 0, 0);
                 return ver.ToString();
             }
         }

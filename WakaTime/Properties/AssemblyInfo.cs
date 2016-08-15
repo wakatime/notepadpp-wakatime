@@ -10,8 +10,8 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("WakaTime")]
 [assembly: AssemblyProduct("WakaTime")]
-[assembly: AssemblyCopyright("Copyright © WakaTime 2015")]
-[assembly: AssemblyTrademark("")]
+[assembly: AssemblyCopyright("Copyright © WakaTime 2016")]
+[assembly: AssemblyTrademark("WakaTime ®")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

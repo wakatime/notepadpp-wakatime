@@ -53,7 +53,7 @@ namespace WakaTime
             var configDir = Dependencies.AppDataDirectory;
             if (string.IsNullOrWhiteSpace(configDir)) return null;
 
-            var filename = string.Format("{0}\\{1}.log", configDir, Constants.NativeName);
+            var filename = string.Format("{0}\\{1}.log", configDir, Constants.PluginName);
             var writer = new StreamWriter(File.Open(filename, FileMode.Append, FileAccess.Write));
             return writer;
         }        
