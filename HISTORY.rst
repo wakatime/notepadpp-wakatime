@@ -3,6 +3,12 @@ History
 -------
 
 
+4.0.2 (2016-08-16)
+++++++++++++++++++
+
+- Correctly detect when user is typing in a file.
+
+
 4.0.1 (2016-08-16)
 ++++++++++++++++++
 
