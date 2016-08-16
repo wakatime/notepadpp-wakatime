@@ -55,12 +55,27 @@ namespace WakaTime
 
         private static StreamWriter Setup()
         {
-            var configDir = Dependencies.AppDataDirectory;
+            var configDir = AppDataDirectory;
             if (string.IsNullOrWhiteSpace(configDir)) return null;
 
             var filename = string.Format("{0}\\{1}.log", configDir, Constants.PluginName);
             var writer = new StreamWriter(File.Open(filename, FileMode.Append, FileAccess.Write));
             return writer;
+        }
+
+        private static string AppDataDirectory
+        {
+            get
+            {
+                string roamingFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                string appFolder = Path.Combine(roamingFolder, "WakaTime");
+
+                // Create folder if it does not exist
+                if (!Directory.Exists(appFolder))
+                    Directory.CreateDirectory(appFolder);
+
+                return appFolder;
+            }
         }
     }
 }

@@ -39,7 +39,7 @@ namespace WakaTime
         static IntPtr getName()
         {
             if (_ptrPluginName == IntPtr.Zero)
-                _ptrPluginName = Marshal.StringToHGlobalUni(WakaTimePackage.PluginName);
+                _ptrPluginName = Marshal.StringToHGlobalUni(Constants.PluginName);
             return _ptrPluginName;
         }
 
