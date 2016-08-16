@@ -43,7 +43,7 @@ namespace WakaTime
                 var writer = Setup();
                 if (writer == null) return;
 
-                writer.WriteLine();
+                writer.WriteLine(msg);
                 writer.Flush();
                 writer.Close();
             }
