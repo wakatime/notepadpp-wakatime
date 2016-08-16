@@ -23,7 +23,7 @@ namespace WakaTime
 
         static int idMyDlg = -1;
         static Bitmap tbBmp = Properties.Resources.wakatime;
-        
+
         static readonly PythonCliParameters PythonCliParameters = new PythonCliParameters();
         static ConfigFile _wakaTimeConfigFile;
         static WakaTime.Forms.SettingsForm _settingsForm;
@@ -58,6 +58,8 @@ namespace WakaTime
 
             try
             {
+                Logger.Initialize(new LoggerNpp());
+
                 Logger.Info(string.Format("Initializing WakaTime v{0}", Constants.PluginVersion));
 
                 // Settings Form
