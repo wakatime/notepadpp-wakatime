@@ -121,7 +121,7 @@ namespace WakaTime
         {
             if (notification.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
             {
-                WakaTimePackage.HandleActivity(WakaTimePackage.GetCurrentFile(), true);
+                HandleActivity(GetCurrentFile(), true);
             }
             else if (notification.Header.Code == (uint)SciMsg.SCI_ADDTEXT)
             {

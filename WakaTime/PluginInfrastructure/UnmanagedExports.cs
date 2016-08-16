@@ -57,6 +57,7 @@ namespace WakaTime
                 WakaTimePackage.PluginCleanUp();
                 Marshal.FreeHGlobal(_ptrPluginName);
             }
+            else
             {
                 WakaTimePackage.OnNotification(notification);
             }
