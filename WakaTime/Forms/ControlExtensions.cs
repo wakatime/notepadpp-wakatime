@@ -10,14 +10,18 @@ namespace WakaTime.Forms
             if (control.IsDisposed)
                 return;
 
-            if (control.InvokeRequired)
+            try
             {
-                control.Invoke(new MethodInvoker(delegate { action(); }));
+                if (control.InvokeRequired && !control.IsDisposed)
+                {
+                    control.Invoke(new MethodInvoker(delegate { action(); }));
+                }
+                else
+                {
+                    action();
+                }
             }
-            else
-            {
-                action();
-            }
+            catch { }
         }
     }
 }
