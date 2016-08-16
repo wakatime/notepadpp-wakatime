@@ -3,6 +3,12 @@ History
 -------
 
 
+4.0.1 (2016-08-16)
+++++++++++++++++++
+
+- Fix bug causing notification handler to be called more often than needed.
+
+
 4.0.0 (2016-08-15)
 ++++++++++++++++++
 
