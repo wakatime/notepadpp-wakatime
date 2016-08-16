@@ -123,7 +123,6 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="ILMergeOrder.txt" />
     <Content Include="Resources\wakatime-120.png" />
