@@ -123,11 +123,7 @@ namespace WakaTime
             {
                 HandleActivity(GetCurrentFile(), true);
             }
-            else if (notification.Header.Code == (uint)SciMsg.SCI_ADDTEXT)
-            {
-                HandleActivity(GetCurrentFile(), false);
-            }
-            else if (notification.Header.Code == (uint)SciMsg.SCI_INSERTTEXT)
+            else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED && (notification.ModificationType & (int)SciMsg.SC_MOD_INSERTTEXT) == (int)SciMsg.SC_MOD_INSERTTEXT)
             {
                 HandleActivity(GetCurrentFile(), false);
             }
