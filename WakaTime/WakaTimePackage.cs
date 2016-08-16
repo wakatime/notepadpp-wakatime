@@ -34,13 +34,10 @@ namespace WakaTime
             idMyDlg = 0;
 
             // finish initializing in background thread
-            Task.Run(() =>
-            {
-                InitializeAsync();
-            });
+            Initialize();
         }
 
-        private static void InitializeAsync()
+        private static void Initialize()
         {
             try
             {
