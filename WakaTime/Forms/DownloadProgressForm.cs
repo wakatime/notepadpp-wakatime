@@ -66,7 +66,10 @@ namespace WakaTime.Forms
 
             this.InvokeIfRequired(() =>
             {
-                Show(_owner);
+                if(_owner != null)
+                    Show(_owner);
+                else
+                    base.Show();
             });
         }
     }

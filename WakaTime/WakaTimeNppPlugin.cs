@@ -1,15 +1,26 @@
 ﻿using Kbg.NppPluginNET.PluginInfrastructure;
 using System;
+using System.Diagnostics;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
 using WakaTime.Forms;
 
 namespace WakaTime
 {
-    class WakaTimeNppPlugin : WakaTimeIdePlugin<UnmanagedExports>
+    class WakaTimeNppPlugin : WakaTimeIdePlugin<UnmanagedExports>, IWin32Window
     {
         private SettingsForm _settingsForm;
         private ApiKeyForm _apiKeyForm;
         private DownloadProgressForm _downloadProgressForm;
+
+        public IntPtr Handle
+        {
+            get
+            {
+                return PluginBase.nppData._nppHandle;
+            }
+        }
 
         public WakaTimeNppPlugin(UnmanagedExports editor) : base(editor)
         {
@@ -54,7 +65,7 @@ namespace WakaTime
             return new EditorInfo
             {
                 Name = "notepadpp",
-                Version = new Version(ver.ToString()),
+                Version = new Version(ver, 0),
                 PluginName = Constants.PluginName,
                 PluginVersion = Constants.PluginVersion
             };
@@ -67,10 +78,7 @@ namespace WakaTime
 
         public override IDownloadProgressReporter GetReporter()
         {
-            if (_downloadProgressForm == null)
-                _downloadProgressForm = new DownloadProgressForm(null);
-
-            return _downloadProgressForm;
+            return new DownloadProgressForm(this);
         }
 
         public override void PromptApiKey()
