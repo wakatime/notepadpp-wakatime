@@ -5,24 +5,20 @@ namespace WakaTime.Forms
 {
     public partial class SettingsForm : Form
     {
-        private readonly ConfigFile _wakaTimeConfigFile;
         internal event EventHandler ConfigSaved;
 
         public SettingsForm()
         {
             InitializeComponent();
-
-            _wakaTimeConfigFile = new ConfigFile();
         }
 
         private void SettingsForm_Load(object sender, EventArgs e)
         {
             try
             {
-                _wakaTimeConfigFile.Read();
-                txtAPIKey.Text = _wakaTimeConfigFile.ApiKey;
-                txtProxy.Text = _wakaTimeConfigFile.Proxy;
-                chkDebugMode.Checked = _wakaTimeConfigFile.Debug;
+                txtAPIKey.Text = WakaTimeConfigFile.ApiKey;
+                txtProxy.Text = WakaTimeConfigFile.Proxy;
+                chkDebugMode.Checked = WakaTimeConfigFile.Debug;
             }
             catch (Exception ex)
             {
@@ -36,15 +32,15 @@ namespace WakaTime.Forms
             try
             {
                 Guid apiKey;
-                var parse = Guid.TryParse(txtAPIKey.Text.Trim(), out apiKey);         
-                                     
+                var parse = Guid.TryParse(txtAPIKey.Text.Trim(), out apiKey);
+
                 if (parse)
                 {
-                    _wakaTimeConfigFile.ApiKey = apiKey.ToString();
-                    _wakaTimeConfigFile.Proxy = txtProxy.Text.Trim();
-                    _wakaTimeConfigFile.Debug = chkDebugMode.Checked;
-                    _wakaTimeConfigFile.Save();
-                    OnConfigSaved();                    
+                    WakaTimeConfigFile.ApiKey = apiKey.ToString();
+                    WakaTimeConfigFile.Proxy = txtProxy.Text.Trim();
+                    WakaTimeConfigFile.Debug = chkDebugMode.Checked;
+                    WakaTimeConfigFile.Save();
+                    OnConfigSaved();
                 }
                 else
                 {
@@ -63,11 +59,6 @@ namespace WakaTime.Forms
         {
             var handler = ConfigSaved;
             if (handler != null) handler(this, EventArgs.Empty);
-        }
-
-        private void label2_Click(object sender, EventArgs e)
-        {
-
         }
     }
 }

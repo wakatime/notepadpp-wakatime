@@ -49,7 +49,7 @@ namespace WakaTime
             var localZipFile = Path.Combine(destinationDir, "wakatime-cli.zip");
 
             // Download wakatime-cli
-            var proxy = WakaTimePackage.GetProxy();
+            var proxy = WakaTimeConfigFile.GetProxy();
             var client = new WebClient { Proxy = proxy };
             client.DownloadFile(url, localZipFile);
             Logger.Debug("Finished downloading wakatime-cli.");
@@ -78,7 +78,7 @@ namespace WakaTime
             var extractToDir = Path.Combine(destinationDir, "python");
 
             // Download python
-            var proxy = WakaTimePackage.GetProxy();
+            var proxy = WakaTimeConfigFile.GetProxy();
             var client = new WebClient { Proxy = proxy };
             client.DownloadFile(url, localZipFile);
             Logger.Debug("Finished downloading python.");

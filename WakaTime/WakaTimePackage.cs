@@ -25,15 +25,10 @@ namespace WakaTime
         static Bitmap tbBmp = Properties.Resources.wakatime;
 
         static readonly PythonCliParameters PythonCliParameters = new PythonCliParameters();
-        static ConfigFile _wakaTimeConfigFile;
-        static WakaTime.Forms.SettingsForm _settingsForm;
+        static Forms.SettingsForm _settingsForm;
         static string _lastFile;
         static DateTime _lastHeartbeat = DateTime.UtcNow.AddMinutes(-3);
         static int heartbeatFrequency = 2; // minutes
-
-        public static bool Debug;
-        public static string ApiKey;
-        public static string Proxy;
 
         private static ConcurrentQueue<Heartbeat> heartbeatQueue = new ConcurrentQueue<Heartbeat>();
         private static System.Timers.Timer timer = new System.Timers.Timer();
@@ -64,14 +59,9 @@ namespace WakaTime
 
                 // Settings Form
                 _settingsForm = new WakaTime.Forms.SettingsForm();
-                _settingsForm.ConfigSaved += SettingsFormOnConfigSaved;
-
-                // Load config file
-                _wakaTimeConfigFile = new ConfigFile();
-                GetSettings();
 
                 // Prompt for api key if not already set
-                if (string.IsNullOrEmpty(ApiKey))
+                if (string.IsNullOrEmpty(WakaTimeConfigFile.ApiKey))
                     PromptApiKey();
 
                 try
@@ -207,7 +197,7 @@ namespace WakaTime
                     extraHeartbeats.Add(new Heartbeat(h));
                 bool hasExtraHeartbeats = extraHeartbeats.Count > 0;
 
-                PythonCliParameters.Key = ApiKey;
+                PythonCliParameters.Key = WakaTimeConfigFile.ApiKey;
                 PythonCliParameters.Plugin = string.Format("{0}/{1} {2}/{3}", Constants.EditorName, Constants.EditorVersion, Constants.PluginKey, Constants.PluginVersion);
                 PythonCliParameters.File = heartbeat.entity;
                 PythonCliParameters.Time = heartbeat.timestamp;
@@ -219,7 +209,7 @@ namespace WakaTime
                     extraHeartbeatsJSON = new JavaScriptSerializer().Serialize(extraHeartbeats);
 
                 var process = new RunProcess(pythonBinary, PythonCliParameters.ToArray());
-                if (Debug)
+                if (WakaTimeConfigFile.Debug)
                 {
                     Logger.Debug(string.Format("[\"{0}\", \"{1}\"]", pythonBinary, string.Join("\", \"", PythonCliParameters.ToArray(true))));
                     process.Run(extraHeartbeatsJSON);
@@ -258,19 +248,6 @@ namespace WakaTime
             return _lastHeartbeat < now.AddMinutes(-1 * heartbeatFrequency);
         }
 
-        private static void SettingsFormOnConfigSaved(object sender, EventArgs eventArgs)
-        {
-            GetSettings();
-        }
-
-        private static void GetSettings()
-        {
-            _wakaTimeConfigFile.Read();
-            ApiKey = _wakaTimeConfigFile.ApiKey;
-            Debug = _wakaTimeConfigFile.Debug;
-            Proxy = _wakaTimeConfigFile.Proxy;
-        }
-
         private static void PromptApiKey()
         {
             Logger.Info("Please input your api key into the wakatime window.");
@@ -290,57 +267,6 @@ namespace WakaTime
             long seconds = Convert.ToInt64(Math.Floor(timestamp.TotalSeconds));
             string milliseconds = timestamp.ToString("ffffff");
             return string.Format("{0}.{1}", seconds, milliseconds);
-        }
-
-        public static WebProxy GetProxy()
-        {
-            WebProxy proxy = null;
-
-            try
-            {
-                var proxyStr = Proxy;
-
-                // Regex that matches proxy address with authentication
-                var regProxyWithAuth = new Regex(@"\s*(https?:\/\/)?([^\s:]+):([^\s:]+)@([^\s:]+):(\d+)\s*");
-                var match = regProxyWithAuth.Match(proxyStr);
-
-                if (match.Success)
-                {
-                    var username = match.Groups[2].Value;
-                    var password = match.Groups[3].Value;
-                    var address = match.Groups[4].Value;
-                    var port = match.Groups[5].Value;
-
-                    var credentials = new NetworkCredential(username, password);
-                    proxy = new WebProxy(string.Join(":", new string[] { address, port }), true, null, credentials);
-
-                    Logger.Debug("A proxy with authentication will be used.");
-                    return proxy;
-                }
-
-                // Regex that matches proxy address and port(no authentication)
-                var regProxy = new Regex(@"\s*(https?:\/\/)?([^\s@]+):(\d+)\s*");
-                match = regProxy.Match(proxyStr);
-
-                if (match.Success)
-                {
-                    var address = match.Groups[2].Value;
-                    var port = int.Parse(match.Groups[3].Value);
-
-                    proxy = new WebProxy(address, port);
-
-                    Logger.Debug("A proxy will be used.");
-                    return proxy;
-                }
-
-                Logger.Debug("No proxy will be used. It's either not set or badly formatted.");
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("Exception while parsing the proxy string from WakaTime config file. No proxy will be used.", ex);
-            }
-
-            return proxy;
         }
 
         internal static class CoreAssembly

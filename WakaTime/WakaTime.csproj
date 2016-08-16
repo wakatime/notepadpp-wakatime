@@ -61,9 +61,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConfigFile.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="Forms\ControlExtensions.cs" />
     <Compile Include="Dependencies.cs" />
+    <Compile Include="Forms\DownloadProgressForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DownloadProgressForm.designer.cs">
+      <DependentUpon>DownloadProgressForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Heartbeat.cs" />
     <Compile Include="LoggerNpp.cs" />
     <Compile Include="NativeMethods.cs" />
@@ -110,6 +116,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Forms\ApiKeyForm.resx">
       <DependentUpon>ApiKeyForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DownloadProgressForm.resx">
+      <DependentUpon>DownloadProgressForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\SettingsForm.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>

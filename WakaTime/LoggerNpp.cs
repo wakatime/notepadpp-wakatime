@@ -8,7 +8,7 @@ namespace WakaTime
     {
         internal void Debug(string msg)
         {
-            if (!WakaTimePackage.Debug)
+            if (!WakaTimeConfigFile.Debug)
                 return;
 
             Log(LogLevel.Debug, msg);

@@ -120,7 +120,6 @@
             this.label2.Size = new System.Drawing.Size(231, 15);
             this.label2.TabIndex = 7;
             this.label2.Text = "Example: https://user:password@host:port";
-            this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // SettingsForm
             // 
