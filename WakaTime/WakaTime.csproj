@@ -54,8 +54,8 @@
     <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="WakaTime, Version=8.0.6.0, Culture=neutral, PublicKeyToken=39e335b90f0da048, processorArchitecture=MSIL">
-      <HintPath>..\packages\WakaTime.8.0.6\lib\net45\WakaTime.dll</HintPath>
+    <Reference Include="WakaTime, Version=8.0.7.0, Culture=neutral, PublicKeyToken=39e335b90f0da048, processorArchitecture=MSIL">
+      <HintPath>..\packages\WakaTime.8.0.7\lib\net45\WakaTime.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>

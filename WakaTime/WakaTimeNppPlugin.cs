@@ -66,6 +66,7 @@ namespace WakaTime
             {
                 Name = "notepadpp",
                 Version = new Version(ver, 0),
+                PluginKey = Constants.PluginKey,
                 PluginName = Constants.PluginName,
                 PluginVersion = Constants.PluginVersion
             };
