@@ -7,7 +7,7 @@ Metrics, insights, and time tracking automatically generated from your programmi
 Installation
 ------------
 
-1. Inside Notepad++ open the Plugin Manager (`Plugins` -> `Plugin Manager` -> `Show Plugin Manager`).
+1. Inside Notepad++ open the Plugin Manager (`Plugins` → `Plugin Manager` → `Show Plugin Manager`).
 
 2. Check the box next to `WakaTime` in the list of plugins.
 
