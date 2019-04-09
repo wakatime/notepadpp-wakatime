@@ -11,40 +11,34 @@ using System.Collections.Concurrent;
 using System.Collections;
 using System.Timers;
 using System.Web.Script.Serialization;
-
 using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace WakaTime
 {
-    class WakaTimePackage
+    internal class WakaTimePackage
     {
         #region Properties
         internal const string PluginName = Constants.PluginName;
 
-        static int idMyDlg = -1;
-        static Bitmap tbBmp = Properties.Resources.wakatime;
+        private static int _idMyDlg = -1;
+        private static readonly Bitmap TbBmp = Properties.Resources.wakatime;
+
+        private static readonly PythonCliParameters PythonCliParameters = new PythonCliParameters();
+        internal static ConfigFile Config;
+        private static Forms.SettingsForm _settingsForm;
+        private static string _lastFile;
+        private static DateTime _lastHeartbeat = DateTime.UtcNow.AddMinutes(-3);
+        private const int HeartbeatFrequency = 2; // minutes
         
-        static readonly PythonCliParameters PythonCliParameters = new PythonCliParameters();
-        static ConfigFile _wakaTimeConfigFile;
-        static WakaTime.Forms.SettingsForm _settingsForm;
-        static string _lastFile;
-        static DateTime _lastHeartbeat = DateTime.UtcNow.AddMinutes(-3);
-        static int heartbeatFrequency = 2; // minutes
-
-        public static bool Debug;
-        public static string ApiKey;
-        public static string Proxy;
-
-        private static ConcurrentQueue<Heartbeat> heartbeatQueue = new ConcurrentQueue<Heartbeat>();
-        private static System.Timers.Timer timer = new System.Timers.Timer();
+        private static readonly ConcurrentQueue<Heartbeat> HeartbeatQueue = new ConcurrentQueue<Heartbeat>();
+        private static System.Timers.Timer _timer = new System.Timers.Timer();
         #endregion
 
         internal static void CommandMenuInit()
         {
-
             // must add menu item in foreground thread
             PluginBase.SetCommand(0, "Wakatime Settings", SettingsPopup, new ShortcutKey(false, false, false, Keys.None));
-            idMyDlg = 0;
+            _idMyDlg = 0;
 
             // finish initializing in background thread
             Task.Run(() =>
@@ -55,21 +49,19 @@ namespace WakaTime
 
         private static void InitializeAsync()
         {
-
             try
             {
-                Logger.Info(string.Format("Initializing WakaTime v{0}", Constants.PluginVersion));
+                Logger.Info($"Initializing WakaTime v{Constants.PluginVersion}");
 
                 // Settings Form
-                _settingsForm = new WakaTime.Forms.SettingsForm();
+                _settingsForm = new Forms.SettingsForm();
                 _settingsForm.ConfigSaved += SettingsFormOnConfigSaved;
 
                 // Load config file
-                _wakaTimeConfigFile = new ConfigFile();
-                GetSettings();
+                Config = new ConfigFile();                
 
                 // Prompt for api key if not already set
-                if (string.IsNullOrEmpty(ApiKey))
+                if (string.IsNullOrEmpty(Config.ApiKey))
                     PromptApiKey();
 
                 try
@@ -95,11 +87,11 @@ namespace WakaTime
                 }
 
                 // setup timer to process queued heartbeats every 8 seconds
-                timer.Interval = 1000 * 8;
-                timer.Elapsed += ProcessHeartbeats;
-                timer.Start();
+                _timer.Interval = 1000 * 8;
+                _timer.Elapsed += ProcessHeartbeats;
+                _timer.Start();
 
-                Logger.Info(string.Format("Finished initializing WakaTime v{0}", Constants.PluginVersion));
+                Logger.Info($"Finished initializing WakaTime v{Constants.PluginVersion}");
             }
             catch (Exception ex)
             {
@@ -109,23 +101,24 @@ namespace WakaTime
 
         internal static void SetToolBarIcon()
         {
-            toolbarIcons tbIcons = new toolbarIcons();
-            tbIcons.hToolbarBmp = tbBmp.GetHbitmap();
-            IntPtr pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
+            var tbIcons = new toolbarIcons { hToolbarBmp = TbBmp.GetHbitmap() };
+            var pTbIcons = Marshal.AllocHGlobal(Marshal.SizeOf(tbIcons));
             Marshal.StructureToPtr(tbIcons, pTbIcons, false);
-            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON, PluginBase._funcItems.Items[idMyDlg]._cmdID, pTbIcons);
+            Win32.SendMessage(PluginBase.nppData._nppHandle, (uint)NppMsg.NPPM_ADDTOOLBARICON,
+                PluginBase._funcItems.Items[_idMyDlg]._cmdID, pTbIcons);
             Marshal.FreeHGlobal(pTbIcons);
         }
 
         public static void OnNotification(ScNotification notification)
         {
-            if (notification.Header.Code == (uint)NppMsg.NPPN_FILESAVED)
+            switch (notification.Header.Code)
             {
-                HandleActivity(GetCurrentFile(), true);
-            }
-            else if (notification.Header.Code == (uint)SciMsg.SCN_MODIFIED && (notification.ModificationType & (int)SciMsg.SC_MOD_INSERTTEXT) == (int)SciMsg.SC_MOD_INSERTTEXT)
-            {
-                HandleActivity(GetCurrentFile(), false);
+                case (uint)NppMsg.NPPN_FILESAVED:
+                    HandleActivity(GetCurrentFile(), true);
+                    break;
+                case (uint)SciMsg.SCN_MODIFIED when (notification.ModificationType & (int)SciMsg.SC_MOD_INSERTTEXT) == (int)SciMsg.SC_MOD_INSERTTEXT:
+                    HandleActivity(GetCurrentFile(), false);
+                    break;
             }
         }
 
@@ -133,11 +126,10 @@ namespace WakaTime
         {
             try
             {
-
                 if (currentFile == null)
                     return;
 
-                DateTime now = DateTime.UtcNow;
+                var now = DateTime.UtcNow;
 
                 if (!isWrite && _lastFile != null && !EnoughTimePassed(now) && currentFile.Equals(_lastFile))
                     return;
@@ -159,11 +151,13 @@ namespace WakaTime
             {
                 try
                 {
-                    Heartbeat h = new Heartbeat();
-                    h.entity = fileName;
-                    h.timestamp = ToUnixEpoch(time);
-                    h.is_write = isWrite;
-                    heartbeatQueue.Enqueue(h);
+                    var h = new Heartbeat
+                    {
+                        entity = fileName,
+                        timestamp = ToUnixEpoch(time),
+                        is_write = isWrite
+                    };
+                    HeartbeatQueue.Enqueue(h);
                 }
                 catch (Exception ex)
                 {
@@ -190,51 +184,55 @@ namespace WakaTime
         private static void ProcessHeartbeats()
         {
             var pythonBinary = Dependencies.GetPython();
+            Heartbeat h;
             if (pythonBinary != null)
             {
                 // get first heartbeat from queue
-                Heartbeat heartbeat;
-                bool gotOne = heartbeatQueue.TryDequeue(out heartbeat);
+                var gotOne = HeartbeatQueue.TryDequeue(out var heartbeat);
                 if (!gotOne)
                     return;
 
                 // remove all extra heartbeats from queue
-                ArrayList extraHeartbeats = new ArrayList();
-                Heartbeat h;
-                while (heartbeatQueue.TryDequeue(out h))
+                var extraHeartbeats = new ArrayList();
+                while (HeartbeatQueue.TryDequeue(out h))
                     extraHeartbeats.Add(new Heartbeat(h));
-                bool hasExtraHeartbeats = extraHeartbeats.Count > 0;
+                var hasExtraHeartbeats = extraHeartbeats.Count > 0;
 
-                PythonCliParameters.Key = ApiKey;
-                PythonCliParameters.Plugin = string.Format("{0}/{1} {2}/{3}", Constants.EditorName, Constants.EditorVersion, Constants.PluginKey, Constants.PluginVersion);
+                PythonCliParameters.Key = Config.ApiKey;
+                PythonCliParameters.Plugin =
+                    $"{Constants.EditorName}/{Constants.EditorVersion} {Constants.PluginKey}/{Constants.PluginVersion}";
                 PythonCliParameters.File = heartbeat.entity;
                 PythonCliParameters.Time = heartbeat.timestamp;
                 PythonCliParameters.IsWrite = heartbeat.is_write;
                 PythonCliParameters.HasExtraHeartbeats = hasExtraHeartbeats;
 
-                string extraHeartbeatsJSON = null;
+                string extraHeartbeatsJson = null;
                 if (hasExtraHeartbeats)
-                    extraHeartbeatsJSON = new JavaScriptSerializer().Serialize(extraHeartbeats);
+                    extraHeartbeatsJson = new JavaScriptSerializer().Serialize(extraHeartbeats);
 
                 var process = new RunProcess(pythonBinary, PythonCliParameters.ToArray());
-                if (Debug)
+                if (Config.Debug)
                 {
-                    Logger.Debug(string.Format("[\"{0}\", \"{1}\"]", pythonBinary, string.Join("\", \"", PythonCliParameters.ToArray(true))));
-                    process.Run(extraHeartbeatsJSON);
-                    if (process.Output != null && process.Output != "")
+                    Logger.Debug(
+                        $"[\"{pythonBinary}\", \"{string.Join("\", \"", PythonCliParameters.ToArray(true))}\"]");
+                    process.Run(extraHeartbeatsJson);
+
+                    if (!string.IsNullOrEmpty(process.Output))
                         Logger.Debug(process.Output);
-                    if (process.Error != null && process.Error != "")
+
+                    if (!string.IsNullOrEmpty(process.Error))
                         Logger.Debug(process.Error);
                 }
                 else
-                    process.RunInBackground(extraHeartbeatsJSON);
+                    process.RunInBackground(extraHeartbeatsJson);
 
                 if (!process.Success)
                 {
                     Logger.Error("Could not send heartbeat.");
-                    if (process.Output != null && process.Output != "")
+                    if (!string.IsNullOrEmpty(process.Output))
                         Logger.Error(process.Output);
-                    if (process.Error != null && process.Error != "")
+
+                    if (!string.IsNullOrEmpty(process.Error))
                         Logger.Error(process.Error);
                 }
             }
@@ -253,26 +251,18 @@ namespace WakaTime
 
         public static bool EnoughTimePassed(DateTime now)
         {
-            return _lastHeartbeat < now.AddMinutes(-1 * heartbeatFrequency);
+            return _lastHeartbeat < now.AddMinutes(-1 * HeartbeatFrequency);
         }
 
         private static void SettingsFormOnConfigSaved(object sender, EventArgs eventArgs)
         {
-            GetSettings();
-        }
-
-        private static void GetSettings()
-        {
-            _wakaTimeConfigFile.Read();
-            ApiKey = _wakaTimeConfigFile.ApiKey;
-            Debug = _wakaTimeConfigFile.Debug;
-            Proxy = _wakaTimeConfigFile.Proxy;
-        }
+            Config.Read();
+        }        
 
         private static void PromptApiKey()
         {
             Logger.Info("Please input your api key into the wakatime window.");
-            var form = new WakaTime.Forms.ApiKeyForm();
+            var form = new Forms.ApiKeyForm();
             form.ShowDialog();
         }
 
@@ -283,11 +273,11 @@ namespace WakaTime
 
         private static string ToUnixEpoch(DateTime date)
         {
-            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            TimeSpan timestamp = date - epoch;
-            long seconds = Convert.ToInt64(Math.Floor(timestamp.TotalSeconds));
-            string milliseconds = timestamp.ToString("ffffff");
-            return string.Format("{0}.{1}", seconds, milliseconds);
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            var timestamp = date - epoch;
+            var seconds = Convert.ToInt64(Math.Floor(timestamp.TotalSeconds));
+            var milliseconds = timestamp.ToString("ffffff");
+            return $"{seconds}.{milliseconds}";
         }
 
         public static WebProxy GetProxy()
@@ -296,7 +286,7 @@ namespace WakaTime
 
             try
             {
-                var proxyStr = Proxy;
+                var proxyStr = Config.Proxy;
 
                 // Regex that matches proxy address with authentication
                 var regProxyWithAuth = new Regex(@"\s*(https?:\/\/)?([^\s:]+):([^\s:]+)@([^\s:]+):(\d+)\s*");
@@ -343,18 +333,18 @@ namespace WakaTime
 
         internal static class CoreAssembly
         {
-            static readonly Assembly Reference = typeof(CoreAssembly).Assembly;
+            private static readonly Assembly Reference = typeof(CoreAssembly).Assembly;
             public static readonly Version Version = Reference.GetName().Version;
         }
 
         internal static void PluginCleanUp()
         {
-            if (timer != null)
+            if (_timer != null)
             {
-                timer.Stop();
-                timer.Elapsed -= ProcessHeartbeats;
-                timer.Dispose();
-                timer = null;
+                _timer.Stop();
+                _timer.Elapsed -= ProcessHeartbeats;
+                _timer.Dispose();
+                _timer = null;
 
                 // make sure the queue is empty
                 ProcessHeartbeats();

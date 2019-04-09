@@ -12,11 +12,11 @@ namespace WakaTime
         HandledException
     };
 
-    static class Logger
+    internal static class Logger
     {        
         internal static void Debug(string msg)
         {
-            if (!WakaTimePackage.Debug)
+            if (!WakaTimePackage.Config.Debug)
                 return;
 
             Log(LogLevel.Debug, msg);
@@ -34,7 +34,7 @@ namespace WakaTime
 
         internal static void Error(string msg, Exception ex = null)
         {
-            var exceptionMessage = string.Format("{0}: {1}", msg, ex);
+            var exceptionMessage = $"{msg}: {ex}";
 
             Log(LogLevel.HandledException, exceptionMessage);
         }
@@ -46,7 +46,7 @@ namespace WakaTime
                 var writer = Setup();
                 if (writer == null) return;
 
-                writer.WriteLine("[Wakatime {0} {1}] {2}", Enum.GetName(level.GetType(), level), DateTime.Now.ToString("hh:mm:ss tt"), msg);            
+                writer.WriteLine("[Wakatime {0} {1:hh:mm:ss tt}] {2}", Enum.GetName(level.GetType(), level), DateTime.Now, msg);            
                 writer.Flush();
                 writer.Close();
             }
@@ -61,7 +61,7 @@ namespace WakaTime
             var configDir = Dependencies.AppDataDirectory;
             if (string.IsNullOrWhiteSpace(configDir)) return null;
 
-            var filename = string.Format("{0}\\{1}.log", configDir, Constants.PluginName);
+            var filename = $"{configDir}\\{Constants.PluginName}.log";
             var writer = new StreamWriter(File.Open(filename, FileMode.Append, FileAccess.Write));
             return writer;
         }        
