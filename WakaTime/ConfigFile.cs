@@ -33,8 +33,7 @@ namespace WakaTime
             // ReSharper disable once InvertIf
             if (NativeMethods.GetPrivateProfileString("settings", "debug", "", ret, 2083, _configFilepath) > 0)
             {
-                bool debug;
-                if (bool.TryParse(ret.ToString(), out debug))
+                if (bool.TryParse(ret.ToString(), out var debug))
                     Debug = debug;
             }
         }
@@ -48,7 +47,7 @@ namespace WakaTime
             NativeMethods.WritePrivateProfileString("settings", "debug", Debug.ToString().ToLower(), _configFilepath);
         }
 
-        static string GetConfigFilePath()
+        private static string GetConfigFilePath()
         {
             var homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             return Path.Combine(homeFolder, ".wakatime.cfg");

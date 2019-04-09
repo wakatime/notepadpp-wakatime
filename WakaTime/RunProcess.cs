@@ -6,7 +6,7 @@ using System.Text;
 
 namespace WakaTime
 {
-    class RunProcess
+    internal class RunProcess
     {
         private readonly string _program;
         private readonly string[] _arguments;
@@ -43,10 +43,7 @@ namespace WakaTime
 
         internal string Error { get; private set; }
 
-        internal bool Success
-        {
-            get { return Exception == null; }
-        }
+        internal bool Success => Exception == null;
 
         internal Exception Exception { get; private set; }        
 
@@ -70,7 +67,7 @@ namespace WakaTime
 
                     if (_stdin != null)
                     {
-                        process.StandardInput.WriteLine(string.Format("{0}\n", _stdin));
+                        process?.StandardInput.WriteLine($"{_stdin}\n");
                     }
 
                     if (_captureOutput)

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace WakaTime
 {
-    static class NativeMethods
+    internal static class NativeMethods
     {
         [DllImport("kernel32")]
         internal static extern long WritePrivateProfileString(string section, string key, string val, string filePath);
