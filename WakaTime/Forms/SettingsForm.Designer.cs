@@ -59,14 +59,15 @@
             this.txtAPIKey.Location = new System.Drawing.Point(124, 13);
             this.txtAPIKey.MaxLength = 36;
             this.txtAPIKey.Name = "txtAPIKey";
-            this.txtAPIKey.Size = new System.Drawing.Size(270, 23);
+            this.txtAPIKey.Size = new System.Drawing.Size(589, 23);
             this.txtAPIKey.TabIndex = 1;
+            this.txtAPIKey.TextChanged += new System.EventHandler(this.txtAPIKey_TextChanged);
             // 
             // btnOk
             // 
             this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(254, 144);
+            this.btnOk.Location = new System.Drawing.Point(124, 160);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(87, 27);
             this.btnOk.TabIndex = 2;
@@ -78,7 +79,7 @@
             // 
             this.btnCancel.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(347, 144);
+            this.btnCancel.Location = new System.Drawing.Point(234, 160);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(87, 27);
             this.btnCancel.TabIndex = 3;
@@ -90,8 +91,9 @@
             this.txtProxy.Location = new System.Drawing.Point(124, 50);
             this.txtProxy.MaxLength = 255;
             this.txtProxy.Name = "txtProxy";
-            this.txtProxy.Size = new System.Drawing.Size(363, 23);
+            this.txtProxy.Size = new System.Drawing.Size(589, 23);
             this.txtProxy.TabIndex = 5;
+            this.txtProxy.TextChanged += new System.EventHandler(this.txtProxy_TextChanged);
             // 
             // label1
             // 
@@ -105,11 +107,11 @@
             // chkDebugMode
             // 
             this.chkDebugMode.AutoSize = true;
-            this.chkDebugMode.Location = new System.Drawing.Point(124, 108);
+            this.chkDebugMode.Location = new System.Drawing.Point(124, 105);
             this.chkDebugMode.Name = "chkDebugMode";
-            this.chkDebugMode.Size = new System.Drawing.Size(149, 19);
+            this.chkDebugMode.Size = new System.Drawing.Size(61, 19);
             this.chkDebugMode.TabIndex = 6;
-            this.chkDebugMode.Text = "Debugging WakaTime?";
+            this.chkDebugMode.Text = "Debug";
             this.chkDebugMode.UseVisualStyleBackColor = true;
             // 
             // label2
@@ -117,16 +119,17 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(121, 76);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(231, 15);
+            this.label2.Size = new System.Drawing.Size(490, 15);
             this.label2.TabIndex = 7;
-            this.label2.Text = "Example: https://user:password@host:port";
+            this.label2.Text = "Example: https://user:pass@host:port or socks5://user:pass@host:port or domain\\us" +
+    "er:pass.";
             this.label2.Click += new System.EventHandler(this.label2_Click);
             // 
             // SettingsForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(536, 183);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
+            this.ClientSize = new System.Drawing.Size(742, 199);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.chkDebugMode);
             this.Controls.Add(this.txtProxy);
