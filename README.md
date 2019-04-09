@@ -3,8 +3,8 @@ notepadpp-wakatime
 
 Metrics, insights, and time tracking automatically generated from your programming activity.
 
+
 ## Installation
-------------
 
 ### Via Plugins Admin (only if you have installed)
 
@@ -22,12 +22,14 @@ Metrics, insights, and time tracking automatically generated from your programmi
 
 5. Visit https://wakatime.com to see your logged time.
 
+
 ### Manually
 
 1. Create a directory named **WakaTime** into Notepad++ plugins folder
     * Usually `C:\Program Files (x86)\Notepad++\plugins\` (for 32 bit) and `C:\Program Files\Notepad++\plugins\` (for 64 bit)
 
 2. Download a [release version][1] and copy the included **WakaTime.dll** to the *plugins/WakaTime* sub-folder at your Notepad++ installation directory.
+
 
 ### Compatibility
 This plugin requires at least
@@ -40,13 +42,13 @@ It has been tested under the following conditions
 * Notepad++ 7.6.6 32-bit and 64-bit
 * Windows 10 Professional (64-bit)
 
+
 ## Screen Shots
-------------
 
 ![Project Overview](https://wakatime.com/static/img/ScreenShots/ScreenShot-2014-10-29.png)
 
+
 ## Troubleshooting
----------------
 
 WakaTime for Notepad++ logs to `C:\Users\<user>\AppData\Roaming\Notepad++\plugins\config\WakaTime.log`.
 
