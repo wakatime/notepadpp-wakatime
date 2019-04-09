@@ -1,4 +1,4 @@
-﻿// NPP plugin platform for .Net v0.93.96 by Kasper B. Graversen etc.
+﻿// NPP plugin platform for .Net v0.94.00 by Kasper B. Graversen etc.
 using System;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -16,14 +16,49 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
     {
         private const int Unused = 0;
 
-        private readonly IntPtr scintilla;
+        private IntPtr scintilla;
 
         public static readonly int LengthZeroTerminator = "\0".Length;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public IntPtr CurrentBufferID { get; set; }
 
 
         public ScintillaGateway(IntPtr scintilla)
         {
             this.scintilla = scintilla;
+        }
+
+        /// <summary>
+        /// Switch the handle between main and second window handle.
+        /// </summary>
+        public void SwitchScintillaHandle()
+        {
+            this.scintilla = this.scintilla == PluginBase.nppData._scintillaMainHandle ? PluginBase.nppData._scintillaSecondHandle : PluginBase.nppData._scintillaMainHandle;
+        }
+
+        /// <summary>
+        /// Change the Scintilla window handle for this Gateway
+        /// and return the previous handle for potentially final updates.
+        /// </summary>
+        /// <param name="newHandle"></param>
+        /// <returns></returns>
+        public IntPtr SetScintillaHandle(IntPtr newHandle)
+        {
+            IntPtr oldHandle = this.scintilla;
+            this.scintilla = newHandle;
+            return oldHandle;
+        }
+
+        /// <summary>
+        /// Return the current Scintilla window handle
+        /// </summary>
+        /// <returns></returns>
+        public IntPtr GetScintillaHandle()
+        {
+            return this.scintilla;
         }
 
         public int GetSelectionLength()
@@ -1802,7 +1837,7 @@ namespace Kbg.NppPluginNET.PluginInfrastructure
         /// </summary>
         public unsafe string GetText(int length)
         {
-            byte[] textBuffer = new byte[10000];
+            byte[] textBuffer = new byte[length];
             fixed (byte* textPtr = textBuffer)
             {
                 IntPtr res = Win32.SendMessage(scintilla, SciMsg.SCI_GETTEXT, length, (IntPtr) textPtr);

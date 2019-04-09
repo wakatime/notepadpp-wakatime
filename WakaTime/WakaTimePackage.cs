@@ -11,12 +11,11 @@ using System.Collections.Concurrent;
 using System.Collections;
 using System.Timers;
 using System.Web.Script.Serialization;
-
 using Kbg.NppPluginNET.PluginInfrastructure;
 
 namespace WakaTime
 {
-    class WakaTimePackage
+    internal class WakaTimePackage
     {
         #region Properties
         internal const string PluginName = Constants.PluginName;
@@ -41,7 +40,6 @@ namespace WakaTime
 
         internal static void CommandMenuInit()
         {
-
             // must add menu item in foreground thread
             PluginBase.SetCommand(0, "Wakatime Settings", SettingsPopup, new ShortcutKey(false, false, false, Keys.None));
             idMyDlg = 0;
@@ -55,7 +53,6 @@ namespace WakaTime
 
         private static void InitializeAsync()
         {
-
             try
             {
                 Logger.Info(string.Format("Initializing WakaTime v{0}", Constants.PluginVersion));
