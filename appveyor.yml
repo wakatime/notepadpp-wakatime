@@ -35,25 +35,25 @@ after_build:
     - ps: >-
 
         if ($env:PLATFORM -eq "x64" -and $env:CONFIGURATION -eq "Release") {
-            Push-AppveyorArtifact "bin\x64\$env:CONFIGURATION\WakaTime.dll" -FileName WakaTime.dll
+            Push-AppveyorArtifact "obj\x64\$env:CONFIGURATION\WakaTime.dll" -FileName WakaTime.dll
         }
 
         if ($env:PLATFORM -eq "Any CPU" -and $env:CONFIGURATION -eq "Release") {
-            Push-AppveyorArtifact "bin\$env:CONFIGURATION\WakaTime.dll" -FileName WakaTime.dll
+            Push-AppveyorArtifact "obj\$env:CONFIGURATION\WakaTime.dll" -FileName WakaTime.dll
         }
 
         if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" -and $env:PLATFORMTOOLSET -eq "v150") {
             if($env:PLATFORM -eq "x64"){
             $ZipFileName = "notepadpp-wakatime_$($env:APPVEYOR_REPO_TAG_NAME)_x64.zip"
-            Remove-Item bin\x64\$env:CONFIGURATION\*.exp
-            Remove-Item bin\x64\$env:CONFIGURATION\*.lib
-            7z a $ZipFileName bin\x64\$env:CONFIGURATION\*
+            Remove-Item obj\x64\$env:CONFIGURATION\*.exp
+            Remove-Item obj\x64\$env:CONFIGURATION\*.lib
+            7z a $ZipFileName obj\x64\$env:CONFIGURATION\*
             }
             if($env:PLATFORM -eq "Any CPU"){
             $ZipFileName = "notepadpp-wakatime_$($env:APPVEYOR_REPO_TAG_NAME)_x86.zip"
-            Remove-Item bin\$env:CONFIGURATION\*.exp
-            Remove-Item bin\$env:CONFIGURATION\*.lib
-            7z a $ZipFileName bin\$env:CONFIGURATION\*
+            Remove-Item obj\$env:CONFIGURATION\*.exp
+            Remove-Item obj\$env:CONFIGURATION\*.lib
+            7z a $ZipFileName obj\$env:CONFIGURATION\*
             }
         }
 
