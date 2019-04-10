@@ -3,6 +3,14 @@ History
 -------
 
 
+4.1.0 (2019-04-10)
+++++++++++++++++++
+
+- Fix for x86/x64 platform.
+- Update NPP plugin platform to v0.94.00.
+- Only one config file instance needed for whole extension.
+
+
 4.0.2 (2016-08-16)
 ++++++++++++++++++
 
