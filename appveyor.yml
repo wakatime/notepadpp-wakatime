@@ -1,5 +1,5 @@
 version: 4.0.2.{build}
-image: Visual Studio 2015
+image: Visual Studio 2017
 
 
 environment:
@@ -17,7 +17,7 @@ configuration:
 install:
     - if "%platform%"=="x64" set archi=amd64
     - if "%platform%"=="Any CPU" set archi=x86
-    - call "C:\Program Files (x86)\Microsoft Visual Studio 15.0\VC\vcvarsall.bat" %archi%
+    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
 
 before_build:
   - nuget restore
