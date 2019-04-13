@@ -4,7 +4,7 @@ image: Visual Studio 2017
 
 environment:
   matrix:
-  - PlatformToolset: v150
+  - PlatformToolset: v141
 
 platform:
     - x64
@@ -42,7 +42,7 @@ after_build:
             Push-AppveyorArtifact "obj\$env:CONFIGURATION\WakaTime.dll" -FileName WakaTime.dll
         }
 
-        if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" -and $env:PLATFORMTOOLSET -eq "v150") {
+        if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" -and $env:PLATFORMTOOLSET -eq "v141") {
             if($env:PLATFORM -eq "x64"){
             $ZipFileName = "notepadpp-wakatime_$($env:APPVEYOR_REPO_TAG_NAME)_x64.zip"
             Remove-Item obj\x64\$env:CONFIGURATION\*.exp
@@ -71,5 +71,5 @@ deploy:
     force_update: true
     on:
         appveyor_repo_tag: true
-        PlatformToolset: v150
+        PlatformToolset: v141
         configuration: Release
