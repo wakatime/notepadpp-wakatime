@@ -188,6 +188,7 @@
     <Content Include="Resources\wakatime-120.png" />
     <None Include="ILMerge.props" />
     <None Include="packages.config" />
+    <None Include="PluginInfrastructure\DllExport\NppPlugin.DllExport.targets" />
     <None Include="Resources\wakatime-16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
