@@ -3,6 +3,12 @@ History
 -------
 
 
+4.2.0 (2020-10-10)
+++++++++++++++++++
+
+- Update NPP plugin platform with latest version.
+
+
 4.1.0 (2019-04-10)
 ++++++++++++++++++
 
