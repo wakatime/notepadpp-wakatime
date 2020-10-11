@@ -20,7 +20,8 @@ namespace WakaTime
                 return string.Format("https://www.python.org/ftp/python/{0}/python-{0}-embed-{1}.zip", CurrentPythonVersion, arch);
             }
         }
-        public static string AppDataDirectory {
+        public static string AppDataDirectory
+        {
             get
             {
                 var roamingFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -37,7 +38,7 @@ namespace WakaTime
 
         public static void DownloadAndInstallCli()
         {
-            Logger.Debug("Downloading wakatime-cli...");            
+            Logger.Debug("Downloading wakatime-cli...");
             var destinationDir = AppDataDirectory;
             var localZipFile = Path.Combine(destinationDir, "wakatime-cli.zip");
 
@@ -71,8 +72,7 @@ namespace WakaTime
             var extractToDir = Path.Combine(destinationDir, "python");
 
             // Download python
-            var proxy = WakaTimePackage.GetProxy();
-            var client = new WebClient { Proxy = proxy };
+            var client = GetWebClient();
             client.DownloadFile(url, localZipFile);
             Logger.Debug("Finished downloading python.");
 
@@ -108,6 +108,16 @@ namespace WakaTime
                 PythonBinaryLocation = GetPythonPathFromFixedPath();
 
             return PythonBinaryLocation;
+        }
+
+        private static WebClient GetWebClient()
+        {
+            if (!ServicePointManager.SecurityProtocol.HasFlag(SecurityProtocolType.Tls12))
+                ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
+            var proxy = WakaTimePackage.GetProxy();
+
+            return new WebClient { Proxy = proxy };
         }
 
         internal static string GetPythonPathFromMicrosoftRegistry()
