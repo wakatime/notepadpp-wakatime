@@ -3,6 +3,12 @@ History
 -------
 
 
+4.2.1 (2020-10-11)
+++++++++++++++++++
+
+- Check for SSL flag before download cli from web.
+
+
 4.2.0 (2020-10-10)
 ++++++++++++++++++
 
