@@ -3,10 +3,16 @@ History
 -------
 
 
+4.2.2 (2020-10-12)
+++++++++++++++++++
+
+- Check for SSL flag before download cli.
+
+
 4.2.1 (2020-10-11)
 ++++++++++++++++++
 
-- Check for SSL flag before download cli from web.
+- Check for SSL flag before download python.
 
 
 4.2.0 (2020-10-10)

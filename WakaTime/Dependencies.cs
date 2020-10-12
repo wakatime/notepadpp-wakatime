@@ -43,8 +43,7 @@ namespace WakaTime
             var localZipFile = Path.Combine(destinationDir, "wakatime-cli.zip");
 
             // Download wakatime-cli
-            var proxy = WakaTimePackage.GetProxy();
-            var client = new WebClient { Proxy = proxy };
+            var client = GetWebClient();
             client.DownloadFile(Constants.CliUrl, localZipFile);
             Logger.Debug("Finished downloading wakatime-cli.");
 
@@ -79,7 +78,7 @@ namespace WakaTime
             // Remove old python folder if it exists
             RecursiveDelete(extractToDir);
 
-            // Extract wakatime cli zip file
+            // Extract python cli zip file
             Logger.Debug($"Extracting python to: {extractToDir}");
             ZipFile.ExtractToDirectory(localZipFile, extractToDir);
             Logger.Debug("Finished extracting python.");
