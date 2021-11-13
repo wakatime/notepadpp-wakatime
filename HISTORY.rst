@@ -3,6 +3,13 @@ History
 -------
 
 
+4.2.3 (2021-11-13)
+++++++++++++++++++
+
+- Fix wakatime-cli location after GitHub repo renamed.
+  `#44 <https://github.com/wakatime/notepadpp-wakatime/issues/44>`_
+
+
 4.2.2 (2020-10-12)
 ++++++++++++++++++
 
