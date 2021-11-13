@@ -48,7 +48,7 @@ namespace WakaTime
             Logger.Debug("Finished downloading wakatime-cli.");
 
             // Remove old folder if it exists
-            RecursiveDelete(Path.Combine(destinationDir, "wakatime-master"));
+            RecursiveDelete(Path.Combine(destinationDir, "legacy-python-cli-master"));
 
             // Extract wakatime-cli zip file
             Logger.Debug($"Extracting wakatime-cli to: {destinationDir}");

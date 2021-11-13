@@ -20,9 +20,9 @@ namespace WakaTime
             }
         }
 
-        internal const string CliUrl = "https://github.com/wakatime/wakatime/archive/master.zip";
-        internal const string CliFolder = @"wakatime-master\wakatime\cli.py";
-        
+        internal const string CliUrl = "https://github.com/wakatime/legacy-python-cli/archive/refs/heads/master.zip";
+        internal const string CliFolder = @"legacy-python-cli-master\wakatime\cli.py";
+
         internal static Func<string> LatestWakaTimeCliVersion = () =>
         {
             var regex = new Regex(@"(__version_info__ = )(\(( ?\'[0-9]+\'\,?){3}\))");
