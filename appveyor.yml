@@ -60,6 +60,7 @@ after_build:
 artifacts:
   - path: notepadpp-wakatime_*.zip
     name: releases
+  - path: '**\WakaTime.dll'
 
 deploy:
     provider: GitHub
