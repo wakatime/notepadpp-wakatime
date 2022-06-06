@@ -86,10 +86,10 @@ namespace WakaTime
                     Logger.Error("Error detecting dependencies. Exception Traceback:", ex);
                 }
 
-                // setup timer to process queued heartbeats every 8 seconds
-                _timer.Interval = 1000 * 8;
+                // setup timer to process queued heartbeats after 10 second delay
+                _timer.Interval = 10 * 1000;
+                _timer.AutoReset = false;
                 _timer.Elapsed += ProcessHeartbeats;
-                _timer.Start();
 
                 Logger.Info($"Finished initializing WakaTime v{Constants.PluginVersion}");
             }
@@ -163,6 +163,8 @@ namespace WakaTime
                 {
                     Logger.Error("Error appending heartbeat", ex);
                 }
+                if (_timer != null)
+                    _timer.Start(); // process heartbeats after 10 second delay
             });
         }
 
