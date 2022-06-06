@@ -3,6 +3,15 @@ History
 -------
 
 
+4.3.0 (2022-06-05)
+++++++++++++++++++
+
+- Prevent running timer continuously without user events.
+  `#48 <https://github.com/wakatime/notepadpp-wakatime/issues/48>`_
+- Fix appveyor builds.
+  `#47 <https://github.com/wakatime/notepadpp-wakatime/issues/47>`_
+
+
 4.2.3 (2021-11-13)
 ++++++++++++++++++
 
