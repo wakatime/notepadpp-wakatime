@@ -1,13 +1,10 @@
-version: 4.0.2.{build}
-image: Visual Studio 2017
+version: 4.2.3.{build}
+image: Visual Studio 2019
 
-
-environment:
-  matrix:
-  - PlatformToolset: v141
 
 platform:
     - x64
+    - x86
     - Any CPU
 
 configuration:
@@ -17,43 +14,30 @@ configuration:
 install:
     - if "%platform%"=="x64" set archi=amd64
     - if "%platform%"=="Any CPU" set archi=x86
-    - call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvarsall.bat" %archi%
+    - if "%platform%"=="x86" set archi=x86
 
 before_build:
   - nuget restore
 
-build:
-    parallel: true                  # enable MSBuild parallel builds
-    verbosity: minimal
-
 build_script:
     - cd "%APPVEYOR_BUILD_FOLDER%"
-    - msbuild WakaTime.sln /m /p:configuration="%configuration%" /p:platform="%platform%" /p:PlatformToolset="%PlatformToolset%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
+    - msbuild WakaTime.sln /m /p:configuration="%configuration%" /p:platform="%platform%" /logger:"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll"
 
 after_build:
-    - cd "%APPVEYOR_BUILD_FOLDER%"\WakaTime
+    - cd "%APPVEYOR_BUILD_FOLDER%"
     - ps: >-
 
-        if ($env:PLATFORM -eq "x64" -and $env:CONFIGURATION -eq "Release") {
-            Push-AppveyorArtifact "obj\x64\$env:CONFIGURATION\WakaTime.dll" -FileName WakaTime.dll
+        if ($env:CONFIGURATION -eq "Release") {
+            Push-AppveyorArtifact "WakaTime\bin\$env:PLATFORM\$env:CONFIGURATION\WakaTime.dll" -FileName WakaTime.dll
         }
 
-        if ($env:PLATFORM -eq "Any CPU" -and $env:CONFIGURATION -eq "Release") {
-            Push-AppveyorArtifact "obj\$env:CONFIGURATION\WakaTime.dll" -FileName WakaTime.dll
-        }
-
-        if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" -and $env:PLATFORMTOOLSET -eq "v141") {
-            if($env:PLATFORM -eq "x64"){
-            $ZipFileName = "notepadpp-wakatime_$($env:APPVEYOR_REPO_TAG_NAME)_x64.zip"
-            Remove-Item obj\x64\$env:CONFIGURATION\*.exp
-            Remove-Item obj\x64\$env:CONFIGURATION\*.lib
-            7z a $ZipFileName obj\x64\$env:CONFIGURATION\*
-            }
-            if($env:PLATFORM -eq "Any CPU"){
-            $ZipFileName = "notepadpp-wakatime_$($env:APPVEYOR_REPO_TAG_NAME)_x86.zip"
-            Remove-Item obj\$env:CONFIGURATION\*.exp
-            Remove-Item obj\$env:CONFIGURATION\*.lib
-            7z a $ZipFileName obj\$env:CONFIGURATION\*
+        if ($($env:APPVEYOR_REPO_TAG) -eq "true" -and $env:CONFIGURATION -eq "Release" ) {
+            if($env:PLATFORM -eq "x64" -or $env:PLATFORM -eq "x86"){
+                $ZipFileName = "notepadpp-wakatime_$($env:APPVEYOR_REPO_TAG_NAME)_$($env:PLATFORM).zip"
+                Remove-Item WakaTime\bin\$env:PLATFORM\$env:CONFIGURATION\*.exp
+                Remove-Item WakaTime\bin\$env:PLATFORM\$env:CONFIGURATION\*.lib
+                Remove-Item WakaTime\bin\$env:PLATFORM\$env:CONFIGURATION\*.pdb
+                7z a $ZipFileName "$($env:APPVEYOR_BUILD_FOLDER)\WakaTime\bin\$env:PLATFORM\$env:CONFIGURATION\*"
             }
         }
 
@@ -72,5 +56,4 @@ deploy:
     force_update: true
     on:
         appveyor_repo_tag: true
-        PlatformToolset: v141
         configuration: Release
