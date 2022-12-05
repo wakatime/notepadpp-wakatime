@@ -14,9 +14,7 @@ namespace WakaTime
                 Environment.OSVersion.Version.Major < 6) return false;
 
             using (var p = Process.GetCurrentProcess())
-            {
                 return NativeMethods.IsWow64Process(p.Handle, out var retVal) && retVal;
-            }
         }
     }
 }

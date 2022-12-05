@@ -1,24 +1,24 @@
-﻿using System;
-
-namespace WakaTime
+﻿namespace WakaTime
 {
-    internal class Heartbeat
+    public class Heartbeat
     {
-        public string entity { get; set; }
-        public string timestamp { get; set; }
-        public string project { get; set; }
-        public bool is_write { get; set; }
+        public string Entity { get; set; }
+        public int Lines { get; set; }
+        public int LineNumber { get; set; }
+        public string Timestamp { get; set; }
+        public bool IsWrite { get; set; }
 
-        public Heartbeat()
+        /// <summary>
+        /// It's a workaround for serialization.
+        /// More details https://bit.ly/3mJB1mP
+        /// </summary>
+        public override string ToString()
         {
-        }
-
-        internal Heartbeat(Heartbeat h)
-        {
-            entity = h.entity;
-            timestamp = h.timestamp;
-            project = h.project;
-            is_write = h.is_write;
+            return $"{{\"entity\":\"{Entity.Replace("\\", "\\\\").Replace("\"", "\\\"")}\"," +
+                $"\"lines-in-file\":{Lines}," +
+                $"\"lineno\":{LineNumber}," +
+                $"\"time\":{Timestamp}," +
+                $"\"is_write\":{IsWrite.ToString().ToLower()}}}";
         }
     }
 }

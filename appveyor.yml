@@ -1,11 +1,9 @@
-version: 4.2.3.{build}
-image: Visual Studio 2017
-
+version: 5.0.0.{build}
+image: Visual Studio 2022
 
 platform:
     - x64
     - x86
-    - Any CPU
 
 configuration:
     - Release
@@ -13,7 +11,6 @@ configuration:
 
 install:
     - if "%platform%"=="x64" set archi=amd64
-    - if "%platform%"=="Any CPU" set archi=x86
     - if "%platform%"=="x86" set archi=x86
 
 before_build:
@@ -26,7 +23,6 @@ build_script:
 after_build:
     - cd "%APPVEYOR_BUILD_FOLDER%"
     - ps: >-
-
         if ($env:CONFIGURATION -eq "Release") {
             Push-AppveyorArtifact "WakaTime\bin\$env:PLATFORM\$env:CONFIGURATION\WakaTime.dll" -FileName WakaTime.dll
         }
