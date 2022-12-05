@@ -2,12 +2,17 @@
 History
 -------
 
+5.0.1 (2002-12-05)
+++++++++++++++++++
+
+- Fix error "Access violation" for x86 arch.
+
 
 5.0.0 (2002-12-04)
 ++++++++++++++++++
 
 - Fix error "This ANSI Plugin is not compatible with your Unicode Notepadd++".
-  `#46 <https://github.com/wakatime/notepadpp-wakatime/issues/46>`
+  `#46 <https://github.com/wakatime/notepadpp-wakatime/issues/46>`_
 - Update to .net frmework 4.8.
 - Add lines in file and current line number.
 - Update `PluginInfrastructure` to latest version.
