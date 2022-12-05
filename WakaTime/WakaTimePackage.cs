@@ -72,7 +72,7 @@ namespace WakaTime
                     _wakaTime.HandleActivity(GetCurrentFile(), true);
                     return;
                 case (uint)SciMsg.SCN_MODIFIED when (nc.ModificationType & (int)SciMsg.SC_MOD_INSERTTEXT) == (int)SciMsg.SC_MOD_INSERTTEXT:
-                    _wakaTime.HandleActivity(GetCurrentFile(), false);
+                    _wakaTime?.HandleActivity(GetCurrentFile(), false);
                     return;
                 case (uint)NppMsg.NPPN_SHUTDOWN:
                     ShutDown();
