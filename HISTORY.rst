@@ -2,13 +2,13 @@
 History
 -------
 
-5.0.1 (2002-12-05)
+5.0.1 (2022-12-05)
 ++++++++++++++++++
 
 - Fix error "Access violation" for x86 arch.
 
 
-5.0.0 (2002-12-04)
+5.0.0 (2022-12-04)
 ++++++++++++++++++
 
 - Fix error "This ANSI Plugin is not compatible with your Unicode Notepadd++".
