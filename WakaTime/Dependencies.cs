@@ -1,249 +1,226 @@
-﻿using System.IO;
-using System.IO.Compression;
-using System.Net;
-using System.Text.RegularExpressions;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Runtime.InteropServices;
 
 namespace WakaTime
 {
     public class Dependencies
     {
-        private const string CurrentPythonVersion = "3.5.2";
-        private static string PythonBinaryLocation { get; set; }
-        private static string PythonDownloadUrl
+        private readonly Logger _logger;
+        private readonly ConfigFile _configFile;
+
+        public Dependencies(Logger logger, ConfigFile configFile)
+        {
+            _logger = logger;
+            _configFile = configFile;
+        }
+
+        public static string HomeLocation
         {
             get
             {
-                var arch = ProcessorArchitectureHelper.Is64BitOperatingSystem ? "amd64" : "win32";
-                return string.Format("https://www.python.org/ftp/python/{0}/python-{0}-embed-{1}.zip", CurrentPythonVersion, arch);
+                var wakaHome = Environment.GetEnvironmentVariable("WAKATIME_HOME");
+
+                if (!string.IsNullOrEmpty(wakaHome) && Directory.Exists(wakaHome))
+                    return wakaHome;
+
+                return Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             }
         }
-        public static string AppDataDirectory
+
+        public static string ResourcesLocation
         {
             get
             {
-                var roamingFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-                var appFolder = Path.Combine(roamingFolder, "WakaTime");
+                var path = Path.Combine(HomeLocation, ".wakatime");
 
-                // Create folder if it does not exist
-                if (!Directory.Exists(appFolder))
-                    Directory.CreateDirectory(appFolder);
+                if (!Directory.Exists(path))
+                    Directory.CreateDirectory(path);
 
-                return appFolder;
+                return path;
             }
         }
-        internal static string CliLocation => Path.Combine(AppDataDirectory, Constants.CliFolder);
 
-        public static void DownloadAndInstallCli()
+        public void CheckAndInstallCli()
         {
-            Logger.Debug("Downloading wakatime-cli...");
-            var destinationDir = AppDataDirectory;
-            var localZipFile = Path.Combine(destinationDir, "wakatime-cli.zip");
+            if (!IsCliInstalled() || !IsCliLatest())
+                InstallCli();
+        }
+
+        private void InstallCli()
+        {
+            var version = GetLatestCliVersion();
+
+            _logger.Debug($"Downloading wakatime-cli {version}...");
+
+            var arch = ProcessorArchitectureHelper.Is64BitOperatingSystem ? "amd64" : "386";
+            var url = $"{Constants.GithubDownloadPrefix}/{version}/wakatime-cli-windows-{arch}.zip";
+            var localZipFile = Path.Combine(ResourcesLocation, $"wakatime-cli-{version}.zip");
 
             // Download wakatime-cli
-            var client = GetWebClient();
-            client.DownloadFile(Constants.CliUrl, localZipFile);
-            Logger.Debug("Finished downloading wakatime-cli.");
-
-            // Remove old folder if it exists
-            RecursiveDelete(Path.Combine(destinationDir, "legacy-python-cli-master"));
+            DownloadFile(url, localZipFile);
+            _logger.Debug($"Finished downloading wakatime-cli {version}");
 
             // Extract wakatime-cli zip file
-            Logger.Debug($"Extracting wakatime-cli to: {destinationDir}");
-            ZipFile.ExtractToDirectory(localZipFile, destinationDir);
-            Logger.Debug("Finished extracting wakatime-cli.");
+            _logger.Debug($"Extracting wakatime-cli to: {ResourcesLocation}");
+            using (var archive = ZipFile.OpenRead(localZipFile))
+            {
+                foreach (var entry in archive.Entries)
+                {
+                    entry.ExtractToFile(Path.Combine(ResourcesLocation, entry.FullName), true);
+                }
+            }
+
+            _logger.Debug("Finished extracting wakatime-cli");
 
             try
             {
                 File.Delete(localZipFile);
             }
-            catch { /* ignored */ }
+            catch
+            { /* ignored */ }
         }
 
-        public static void DownloadAndInstallPython()
-        {
-            Logger.Debug("Downloading python...");
-            var url = PythonDownloadUrl;
-            var destinationDir = AppDataDirectory;
-            var localZipFile = Path.Combine(destinationDir, "python.zip");
-            var extractToDir = Path.Combine(destinationDir, "python");
-
-            // Download python
-            var client = GetWebClient();
-            client.DownloadFile(url, localZipFile);
-            Logger.Debug("Finished downloading python.");
-
-            // Remove old python folder if it exists
-            RecursiveDelete(extractToDir);
-
-            // Extract python cli zip file
-            Logger.Debug($"Extracting python to: {extractToDir}");
-            ZipFile.ExtractToDirectory(localZipFile, extractToDir);
-            Logger.Debug("Finished extracting python.");
-
-            try
-            {
-                File.Delete(localZipFile);
-            }
-            catch { /* ignored */ }
-        }
-
-        internal static bool IsPythonInstalled()
-        {
-            return GetPython() != null;
-        }
-
-        internal static string GetPython()
-        {
-            if (PythonBinaryLocation == null)
-                PythonBinaryLocation = GetEmbeddedPythonPath();
-
-            if (PythonBinaryLocation == null)
-                PythonBinaryLocation = GetPythonPathFromMicrosoftRegistry();
-
-            if (PythonBinaryLocation == null)
-                PythonBinaryLocation = GetPythonPathFromFixedPath();
-
-            return PythonBinaryLocation;
-        }
-
-        private static WebClient GetWebClient()
-        {
-            if (!ServicePointManager.SecurityProtocol.HasFlag(SecurityProtocolType.Tls12))
-                ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
-
-            var proxy = WakaTimePackage.GetProxy();
-
-            return new WebClient { Proxy = proxy };
-        }
-
-        internal static string GetPythonPathFromMicrosoftRegistry()
+        private string GetLatestCliVersion()
         {
             try
             {
-                var regex = new Regex(@"""([^""]*)\\([^""\\]+(?:\.[^"".\\]+))""");
-                var pythonKey = Registry.ClassesRoot.OpenSubKey(@"Python.File\shell\open\command");
-                if (pythonKey == null)
-                    return null;
+                var isAlpha = _configFile.GetSettingAsBoolean("alpha");
+                var url = isAlpha
+                    ? Constants.GithubReleasesAlphaUrl
+                    : Constants.GithubReleasesStableUrl;
 
-                var python = pythonKey.GetValue(null).ToString();
-                var match = regex.Match(python);
+                var client = GetHttpClient();
+                var req = new HttpRequestMessage(HttpMethod.Get, url);
+                req.Headers.TryAddWithoutValidation("User-Agent", "github.com/wakatime/notepadpp-wakatime");
 
-                if (!match.Success) return null;
+                var cliVersionLastModified = _configFile.GetSetting("cli_version_last_modified", "internal");
+                if (!string.IsNullOrEmpty(cliVersionLastModified))
+                    req.Headers.TryAddWithoutValidation("If-Modified-Since", cliVersionLastModified);
 
-                var directory = match.Groups[1].Value;
-                var fullPath = Path.Combine(directory, "pythonw");
-                var process = new RunProcess(fullPath, "--version");
+                var res = client.SendAsync(req).GetAwaiter().GetResult();
 
-                process.Run();
+                _logger.Debug($"GitHub API Response {res?.StatusCode}");
 
-                if (!process.Success)
-                    return null;
+                if (res.StatusCode == HttpStatusCode.NotModified)
+                {
+                    return _configFile.GetSetting("cli_version", "internal");
+                }
 
-                Logger.Debug($"Python found from Microsoft Registry: {fullPath}");
+                var resBody = res.Content.ReadAsStringAsync().GetAwaiter().GetResult();
 
-                return fullPath;
+                string version;
+
+                if (isAlpha)
+                    version = JSONSerializer.DeSerialize<IList<GithubReleaseApiResponse>>(resBody)[0].TagName;
+                else
+                    version = JSONSerializer.DeSerialize<GithubReleaseApiResponse>(resBody).TagName;
+
+                _logger.Debug($"Latest wakatime-cli version from GitHub: {version}");
+
+                res.Headers.TryGetValues("Last-Modified", out var lastModifiedList);
+                var lastModified = lastModifiedList?.FirstOrDefault();
+                if (!string.IsNullOrEmpty(lastModified))
+                {
+                    _configFile.SaveSetting("internal", "cli_version", version);
+                    _configFile.SaveSetting("internal", "cli_version_last_modified", lastModified);
+                }
+
+                return version;
+
             }
             catch (Exception ex)
             {
-                Logger.Error("GetPathFromMicrosoftRegistry:", ex);
-                return null;
-            }
-        }
-
-        internal static string GetPythonPathFromFixedPath()
-        {
-            var locations = new List<string>();
-            for (var i = 26; i <= 50; i++)
-            {
-                locations.Add(Path.Combine("\\python" + i, "pythonw"));
-                locations.Add(Path.Combine("\\Python" + i, "pythonw"));
-            }
-
-            foreach (var location in locations)
-            {
-                try
-                {
-                    var process = new RunProcess(location, "--version");
-                    process.Run();
-
-                    if (!process.Success) continue;
-                }
-                catch { /*ignored*/ }
-
-                Logger.Debug($"Python found by Fixed Path: {location}");
-
-                return location;
+                _logger.Error("Error getting latest wakatime cli version from GitHub", ex);
             }
 
             return null;
         }
 
-        internal static string GetEmbeddedPythonPath()
+        private bool IsCliLatest()
         {
-            var path = Path.Combine(AppDataDirectory, "python", "pythonw");
-            try
-            {
-                var process = new RunProcess(path, "--version");
-                process.Run();
+            var process = new RunProcess(GetCliLocation(), "--version");
 
-                if (!process.Success)
-                    return null;
-
-                Logger.Debug($"Python found from embedded location: {path}");
-
-                return path;
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("GetEmbeddedPath:", ex);
-                return null;
-            }
-        }
-
-        internal static bool DoesCliExist()
-        {
-            return File.Exists(CliLocation);
-        }
-
-        internal static bool IsCliUpToDate()
-        {
-            var process = new RunProcess(Dependencies.GetPython(), CliLocation, "--version");
             process.Run();
 
-            if (process.Success)
+            if (!process.Success)
             {
-                var currentVersion = process.Error.Trim();
-                Logger.Info($"Current wakatime-cli version is {currentVersion}");
+                _logger.Error(process.Error);
 
-                Logger.Info("Checking for updates to wakatime-cli...");
-                var latestVersion = Constants.LatestWakaTimeCliVersion();
-
-                if (currentVersion.Equals(latestVersion))
-                {
-                    Logger.Info("wakatime-cli is up to date.");
-                    return true;
-                }
-
-                Logger.Info($"Found an updated wakatime-cli v{latestVersion}");
+                return false;
             }
+
+            var currentVersion = process.Output?.Trim();
+
+            _logger.Debug($"Current wakatime-cli version is {currentVersion}");
+            _logger.Debug("Checking for updates to wakatime-cli...");
+
+            var latestVersion = GetLatestCliVersion();
+
+            if (currentVersion.Equals(latestVersion))
+            {
+                _logger.Info("wakatime-cli is up to date");
+                return true;
+            }
+
+            _logger.Info($"Found an updated wakatime-cli {latestVersion}");
+
             return false;
         }
 
-        internal static void RecursiveDelete(string folder)
+        public static string GetConfigFilePath()
         {
-            try
+            return Path.Combine(HomeLocation, ".wakatime.cfg");
+        }
+
+        internal static string GetCliLocation()
+        {
+            var ext = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".exe" : "";
+
+            var arch = ProcessorArchitectureHelper.Is64BitOperatingSystem ? "amd64" : "386";
+
+            return Path.Combine(ResourcesLocation, $"wakatime-cli-windows-{arch}{ext}");
+        }
+
+        private static bool IsCliInstalled()
+        {
+            return File.Exists(GetCliLocation());
+        }
+
+        private HttpClient GetHttpClient()
+        {
+            var handler = new HttpClientHandler();
+
+            if (!_configFile.GetSettingAsBoolean("no_ssl_verify") &&
+                !ServicePointManager.SecurityProtocol.HasFlag(SecurityProtocolType.Tls12))
             {
-                Directory.Delete(folder, true);
+                ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
             }
-            catch { /* ignored */ }
-            try
+
+            var proxy = _configFile.GetSetting("proxy");
+            if (!string.IsNullOrEmpty(proxy))
             {
-                File.Delete(folder);
+                handler.UseProxy = true;
+                handler.Proxy = new Proxy(_logger, _configFile.ConfigFilepath).Get();
             }
-            catch { /* ignored */ }
+
+            return new HttpClient(handler);
+        }
+
+        private void DownloadFile(string url, string saveAs)
+        {
+            var client = GetHttpClient();
+
+            var res = client.GetAsync(url).GetAwaiter().GetResult();
+            var stream = res.Content.ReadAsStreamAsync().GetAwaiter().GetResult();
+
+            using (var fileStream = File.Create(saveAs))
+                stream.CopyTo(fileStream);
         }
     }
 }

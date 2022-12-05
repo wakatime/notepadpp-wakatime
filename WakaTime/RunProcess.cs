@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -9,14 +8,16 @@ namespace WakaTime
     internal class RunProcess
     {
         private readonly string _program;
-        private readonly string[] _arguments;
+        private readonly string _arguments;
         private string _stdin;
         private bool _captureOutput;
 
         internal RunProcess(string program, params string[] arguments)
         {
             _program = program;
-            _arguments = arguments;
+            _arguments = arguments
+                .Aggregate(string.Empty, (current, arg) => current + "\"" + arg + "\" ")
+                .TrimEnd(' ');
             _captureOutput = true;
         }
 
@@ -45,7 +46,7 @@ namespace WakaTime
 
         internal bool Success => Exception == null;
 
-        internal Exception Exception { get; private set; }        
+        private Exception Exception { get; set; }
 
         internal void Run()
         {
@@ -59,11 +60,17 @@ namespace WakaTime
                     RedirectStandardInput = _stdin != null,
                     FileName = _program,
                     CreateNoWindow = true,
-                    Arguments = GetArgumentString()
+                    Arguments = _arguments,
                 };
-                
+
                 using (var process = Process.Start(procInfo))
                 {
+                    // run background process at lower priority to prevent lagging GUI
+                    try
+                    {
+                        if (process != null) process.PriorityClass = ProcessPriorityClass.BelowNormal;
+                    }
+                    catch (Exception) { /* Might fail if not Admin */ }
 
                     if (_stdin != null)
                     {
@@ -75,16 +82,13 @@ namespace WakaTime
                         var stdOut = new StringBuilder();
                         var stdErr = new StringBuilder();
 
-                        while (process != null && !process.HasExited)
-                        {
-                            stdOut.Append(process.StandardOutput.ReadToEnd());
-                            stdErr.Append(process.StandardError.ReadToEnd());
-                        }
-
                         if (process != null)
                         {
-                            stdOut.Append(process.StandardOutput.ReadToEnd());
-                            stdErr.Append(process.StandardError.ReadToEnd());
+                            process.OutputDataReceived += (s, e) => stdOut.Append(e.Data);
+                            process.ErrorDataReceived += (s, e) => stdErr.Append(e.Data);
+                            process.BeginOutputReadLine();
+                            process.BeginErrorReadLine();
+                            process.WaitForExit(1000 * 60 * 10); // 10 minutes
                         }
 
                         Output = stdOut.ToString().Trim(Environment.NewLine.ToCharArray()).Trim('\r', '\n');
@@ -100,12 +104,6 @@ namespace WakaTime
                 Error = ex.Message;
                 Exception = ex;
             }
-        }
-
-        private string GetArgumentString()
-        {
-            var args = _arguments.Aggregate(string.Empty, (current, arg) => current + "\"" + arg + "\" ");
-            return args.TrimEnd(' ');
         }
     }
 }

@@ -1,8 +1,6 @@
-notepadpp-wakatime
-=====================
+# notepadpp-wakatime
 
 Metrics, insights, and time tracking automatically generated from your programming activity.
-
 
 ## Installation
 
@@ -16,12 +14,11 @@ Metrics, insights, and time tracking automatically generated from your programmi
 
 4. Restart Notepad++.
 
-3. Enter your [api key](https://wakatime.com/settings#apikey), then press `enter`.
+5. Enter your [api key](https://wakatime.com/settings#apikey), then press `enter`.
 
-4. Use Notepad++ like you normally do and your time will be tracked for you automatically.
+6. Use Notepad++ like you normally do and your time will be tracked for you automatically.
 
-5. Visit https://wakatime.com to see your logged time.
-
+7. Visit <https://wakatime.com> to see your logged time.
 
 ### Manually
 
@@ -30,32 +27,34 @@ Metrics, insights, and time tracking automatically generated from your programmi
 
 2. Download a [release version][1] and copy the included **WakaTime.dll** to the *plugins/WakaTime* sub-folder at your Notepad++ installation directory.
 
-
 ### Compatibility
+
 This plugin requires at least
+
 * Notepad++ 32-bit or 64-bit
 * Windows
-* .NET Framework 4.5 or above
+* .Net Framework 4.8 or above
 
-It has been tested under the following conditions
-* Notepad++ 7.5.9 64-bit
-* Notepad++ 7.6.6 32-bit and 64-bit
-* Windows 10 Professional (64-bit)
+It's supported on
 
+* Notepad++ 7.6.3 and above
 
 ## Screen Shots
 
 ![Project Overview](https://wakatime.com/static/img/ScreenShots/ScreenShot-2014-10-29.png)
 
-
 ## Troubleshooting
 
-WakaTime for Notepad++ logs to `C:\Users\<user>\AppData\Roaming\Notepad++\plugins\config\WakaTime.log`.
+WakaTime for Notepad++ logs to `C:\Users\<user>\AppData\Roaming\WakaTime\notepadpp-wakatime.log`.
 
 Turn on debug mode (click the WakaTime icon in Notepad++) then check your log file.
 
-WakaTime Core logs to `C:\Users\<user>\.wakatime.log`. Check there after looking in your Notepad++ WakaTime.log file.
+WakaTime Core logs to `C:\Users\<user>\.wakatime.log`. Check there after looking in your Notepad++ WakaTime log file.
 
-More help can be found at https://github.com/wakatime/wakatime#troubleshooting.
+### Can't read WakaTime config file
+
+Make sure you `~/.wakatime.cfg` is UTF-8 encoded without BOM.
+
+More help can be found at <https://github.com/wakatime/wakatime-cli/blob/develop/TROUBLESHOOTING.md>.
 
   [1]: https://github.com/wakatime/notepadpp-wakatime/releases

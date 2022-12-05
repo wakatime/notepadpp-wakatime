@@ -1,5 +1,4 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
@@ -10,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("WakaTime")]
 [assembly: AssemblyProduct("WakaTime")]
-[assembly: AssemblyCopyright("Copyright © WakaTime 2016")]
+[assembly: AssemblyCopyright("Copyright © WakaTime 2022")]
 [assembly: AssemblyTrademark("WakaTime ®")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("31492674-6fe0-485c-91f0-2e17244588ff")]
+[assembly: Guid("0f9f9ac7-1922-42ec-8bb5-a1598f3d2650")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("4.3.0")]
-[assembly: AssemblyFileVersion("4.3.0")]
+[assembly: AssemblyVersion("5.0.0")]
+[assembly: AssemblyFileVersion("5.0.0")]

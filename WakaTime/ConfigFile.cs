@@ -1,56 +1,55 @@
-﻿using System;
-using System.IO;
+﻿using System.Runtime.InteropServices;
 using System.Text;
 
 namespace WakaTime
 {
     public class ConfigFile
     {
-        internal string ApiKey { get; set; }        
-        internal string Proxy { get; set; }
-        internal bool Debug { get; set; }
+        [DllImport("kernel32", EntryPoint = "WritePrivateProfileStringW", SetLastError = true, CharSet = CharSet.Auto)]
+        internal static extern bool WritePrivateProfileString(
+            string section,
+            string key,
+            string val,
+            string filePath);
 
-        private readonly string _configFilepath;
+        [DllImport("kernel32", EntryPoint = "GetPrivateProfileStringW", SetLastError = true, CharSet = CharSet.Unicode)]
+        internal static extern uint GetPrivateProfileString(
+            string section,
+            string key,
+            string def,
+            StringBuilder retVal, 
+            uint size,
+            string filePath);
 
-        internal ConfigFile()
+        public readonly string ConfigFilepath;
+
+        public ConfigFile(string configFilepath)
         {
-            _configFilepath = GetConfigFilePath();
-            Read();
+            ConfigFilepath = configFilepath;
         }
 
-        internal void Read()
+        public string GetSetting(string key, string section = "settings")
         {
-            var ret = new StringBuilder(2083);
+            var ret = new StringBuilder(255);
 
-            ApiKey = NativeMethods.GetPrivateProfileString("settings", "api_key", "", ret, 2083, _configFilepath) > 0
-                ? ret.ToString()
-                : string.Empty;
-
-            Proxy = NativeMethods.GetPrivateProfileString("settings", "proxy", "", ret, 2083, _configFilepath) > 0
-                ? ret.ToString()
-                : string.Empty;
-
-            // ReSharper disable once InvertIf
-            if (NativeMethods.GetPrivateProfileString("settings", "debug", "", ret, 2083, _configFilepath) > 0)
-            {
-                if (bool.TryParse(ret.ToString(), out var debug))
-                    Debug = debug;
-            }
+            _ = GetPrivateProfileString(section, key, "", ret, (uint)ret.Capacity, ConfigFilepath);
+            
+            return ret.ToString();
         }
 
-        internal void Save()
+        public bool GetSettingAsBoolean(string key, bool @default = false, string section = "settings")
         {
-            if (!string.IsNullOrEmpty(ApiKey))
-                NativeMethods.WritePrivateProfileString("settings", "api_key", ApiKey.Trim(), _configFilepath);
+            var ret = GetSetting(key, section);
 
-            NativeMethods.WritePrivateProfileString("settings", "proxy", Proxy.Trim(), _configFilepath);
-            NativeMethods.WritePrivateProfileString("settings", "debug", Debug.ToString().ToLower(), _configFilepath);
+            if (bool.TryParse(ret.ToString(), out var parsed))
+                return parsed;
+
+            return @default;
         }
 
-        private static string GetConfigFilePath()
+        public void SaveSetting(string section, string key, string value)
         {
-            var homeFolder = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            return Path.Combine(homeFolder, ".wakatime.cfg");
+            _ = WritePrivateProfileString(section, key, value, ConfigFilepath);
         }
     }
 }

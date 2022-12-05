@@ -2,7 +2,6 @@
 using System;
 using System.Runtime.InteropServices;
 using Kbg.NppPluginNET.PluginInfrastructure;
-using NppPlugin.DllExport;
 using WakaTime;
 
 namespace Kbg.NppPluginNET
@@ -19,12 +18,13 @@ namespace Kbg.NppPluginNET
         static void setInfo(NppData notepadPlusData)
         {
             PluginBase.nppData = notepadPlusData;
-            WakaTimePackage.CommandMenuInit();
+            //WakaTimePackage.CommandMenuInit();
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static IntPtr getFuncsArray(ref int nbF)
         {
+            WakaTimePackage.CommandMenuInit();
             nbF = PluginBase._funcItems.Items.Count;
             return PluginBase._funcItems.NativePointer;
         }
@@ -40,28 +40,15 @@ namespace Kbg.NppPluginNET
         static IntPtr getName()
         {
             if (_ptrPluginName == IntPtr.Zero)
-                _ptrPluginName = Marshal.StringToHGlobalUni(WakaTimePackage.PluginName);
+                _ptrPluginName = Marshal.StringToHGlobalUni("WakaTime");
             return _ptrPluginName;
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void beNotified(IntPtr notifyCode)
         {
-            ScNotification notification = (ScNotification)Marshal.PtrToStructure(notifyCode, typeof(ScNotification));
-            if (notification.Header.Code == (uint)NppMsg.NPPN_TBMODIFICATION)
-            {
-                PluginBase._funcItems.RefreshItems();
-                WakaTimePackage.SetToolBarIcon();
-            }
-            else if (notification.Header.Code == (uint)NppMsg.NPPN_SHUTDOWN)
-            {
-                WakaTimePackage.PluginCleanUp();
-                Marshal.FreeHGlobal(_ptrPluginName);
-            }
-            else
-            {
-                WakaTimePackage.OnNotification(notification);
-            }
+            var notification = (ScNotification)Marshal.PtrToStructure(notifyCode, typeof(ScNotification));
+            WakaTimePackage.OnNppNotification(notification, _ptrPluginName);
         }
     }
 }

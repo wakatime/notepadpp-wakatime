@@ -1,69 +1,81 @@
-using System;
+﻿using System;
 using System.IO;
 using System.Windows.Forms;
 
 namespace WakaTime
 {
-    internal enum LogLevel
+    public class Logger
     {
-        Debug = 1,
-        Info,
-        Warning,
-        HandledException
-    };
+        private readonly bool _isDebugEnabled;
+        private readonly StreamWriter _writer;
 
-    internal static class Logger
-    {        
-        internal static void Debug(string msg)
+        public Logger(string configFilepath)
         {
-            if (!WakaTimePackage.Config.Debug)
+            var configFile = new ConfigFile(configFilepath);
+
+            _isDebugEnabled = configFile.GetSettingAsBoolean("debug");
+
+            var filename = $"{AppDataDirectory}\\notepadpp-wakatime.log";
+
+            _writer = new StreamWriter(File.Open(filename, FileMode.Append, FileAccess.Write));
+        }
+
+        private static string AppDataDirectory
+        {
+            get
+            {
+                var roamingFolder = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+                var appFolder = Path.Combine(roamingFolder, "WakaTime");
+
+                // Create folder if it does not exist
+                if (!Directory.Exists(appFolder))
+                    Directory.CreateDirectory(appFolder);
+
+                return appFolder;
+            }
+        }
+
+        public void Debug(string msg)
+        {
+            if (!_isDebugEnabled)
                 return;
 
             Log(LogLevel.Debug, msg);
         }
 
-        internal static void Info(string msg)
+        public void Info(string msg)
         {
             Log(LogLevel.Info, msg);
         }
 
-        internal static void Warning(string msg)
+        public void Warning(string msg)
         {
             Log(LogLevel.Warning, msg);
         }
 
-        internal static void Error(string msg, Exception ex = null)
+        public void Error(string msg, Exception ex = null)
         {
             var exceptionMessage = $"{msg}: {ex}";
 
             Log(LogLevel.HandledException, exceptionMessage);
         }
 
-        internal static void Log(LogLevel level, string msg)
+        private void Log(LogLevel level, string msg)
         {
             try
             {
-                var writer = Setup();
-                if (writer == null) return;
-
-                writer.WriteLine("[Wakatime {0} {1:hh:mm:ss tt}] {2}", Enum.GetName(level.GetType(), level), DateTime.Now, msg);            
-                writer.Flush();
-                writer.Close();
+                _writer.WriteLine("[Wakatime {0} {1:hh:mm:ss tt}] {2}", Enum.GetName(level.GetType(), level), DateTime.Now, msg);
+                _writer.Flush();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "Error writing to WakaTime.log", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                MessageBox.Show(ex.ToString(), "Error writing to notepadpp-wakatime.log", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
             }
         }
 
-        private static StreamWriter Setup()
+        public void Close()
         {
-            var configDir = Dependencies.AppDataDirectory;
-            if (string.IsNullOrWhiteSpace(configDir)) return null;
-
-            var filename = $"{configDir}\\{Constants.PluginName}.log";
-            var writer = new StreamWriter(File.Open(filename, FileMode.Append, FileAccess.Write));
-            return writer;
-        }        
+            _writer?.Close();
+        }
     }
 }

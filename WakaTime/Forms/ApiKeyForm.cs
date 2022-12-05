@@ -5,9 +5,14 @@ namespace WakaTime.Forms
 {
     public partial class ApiKeyForm : Form
     {
+        private readonly ConfigFile _configFile;
+        private readonly Logger _logger;
 
-        public ApiKeyForm()
-        {            
+        public ApiKeyForm(ConfigFile configFile, Logger logger)
+        {
+            _configFile = configFile;
+            _logger = logger;
+
             InitializeComponent();
         }
 
@@ -15,7 +20,7 @@ namespace WakaTime.Forms
         {
             try
             {
-                txtAPIKey.Text = WakaTimePackage.Config.ApiKey;
+                txtAPIKey.Text = _configFile.GetSetting("api_key");
             }
             catch (Exception ex)
             {
@@ -27,22 +32,23 @@ namespace WakaTime.Forms
         {
             try
             {
-                Guid apiKey;
-                var parse = Guid.TryParse(txtAPIKey.Text.Trim(), out apiKey);                              
+                var parse = Guid.TryParse(txtAPIKey.Text.Trim(), out var apiKey);
+                
                 if (parse)
                 {
-                    WakaTimePackage.Config.ApiKey = apiKey.ToString();
-                    WakaTimePackage.Config.Save();
-                    WakaTimePackage.Config.ApiKey = apiKey.ToString();
+                    _configFile.SaveSetting("settings", "api_key", apiKey.ToString());
                 }
                 else
                 {
                     MessageBox.Show("Please enter valid Api Key.");
+
                     DialogResult = DialogResult.None; // do not close dialog box
                 }
             }
             catch (Exception ex)
             {
+                _logger.Error($"Error saving data drom ApiKeyForm: {ex}");
+
                 MessageBox.Show(ex.Message);
             }
         }
