@@ -53,7 +53,7 @@
             // txtAPIKey
             // 
             this.txtAPIKey.Location = new System.Drawing.Point(130, 41);
-            this.txtAPIKey.MaxLength = 255;
+            this.txtAPIKey.MaxLength = 41;
             this.txtAPIKey.Name = "txtAPIKey";
             this.txtAPIKey.Size = new System.Drawing.Size(243, 23);
             this.txtAPIKey.TabIndex = 1;
