@@ -3,6 +3,12 @@ History
 -------
 
 
+5.1.1 (2023-11-01)
+++++++++++++++++++
+
+- Increase max length of api key text input to support waka prefix
+
+
 5.1.0 (2023-01-07)
 ++++++++++++++++++
 
