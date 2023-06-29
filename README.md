@@ -49,11 +49,11 @@ WakaTime for Notepad++ logs to `%appdata%\WakaTime\notepadpp-wakatime.log`.
 
 Turn on debug mode (click the WakaTime icon in Notepad++) then check your log file.
 
-WakaTime Core logs to `%homepath%\.wakatime.log`. Check there after looking in your Notepad++ WakaTime log file.
+WakaTime Core logs to `%homepath%\.wakatime\wakatime.log`. Check there after looking in your Notepad++ WakaTime log file.
 
 ### Can't read WakaTime config file
 
-Make sure you `~/.wakatime.cfg` is UTF-8 encoded without BOM.
+Make sure you `%homepath%\.wakatime.cfg` is UTF-8 encoded without BOM.
 
 More help can be found at <https://github.com/wakatime/wakatime-cli/blob/develop/TROUBLESHOOTING.md>.
 
