@@ -45,11 +45,11 @@ It's supported on
 
 ## Troubleshooting
 
-WakaTime for Notepad++ logs to `C:\Users\<user>\AppData\Roaming\WakaTime\notepadpp-wakatime.log`.
+WakaTime for Notepad++ logs to `%appdata%\WakaTime\notepadpp-wakatime.log`.
 
 Turn on debug mode (click the WakaTime icon in Notepad++) then check your log file.
 
-WakaTime Core logs to `C:\Users\<user>\.wakatime.log`. Check there after looking in your Notepad++ WakaTime log file.
+WakaTime Core logs to `%homepath%\.wakatime.log`. Check there after looking in your Notepad++ WakaTime log file.
 
 ### Can't read WakaTime config file
 
