@@ -15,21 +15,28 @@ namespace WakaTime
 
         private static void Initialize()
         {
-            var metadata = new Metadata
+            try
             {
-                EditorName = "notepadpp",
-                PluginName = "notepadpp-wakatime",
-                EditorVersion = EditorVersion,
-                PluginVersion = PluginVersion
-            };
+                var metadata = new Metadata
+                {
+                    EditorName = "notepadpp",
+                    PluginName = "notepadpp-wakatime",
+                    EditorVersion = EditorVersion,
+                    PluginVersion = PluginVersion
+                };
 
-            _wakaTime = new WakaTime(metadata, new Logger(Dependencies.GetConfigFilePath()));
-            _wakaTime.Initialize();
+                _wakaTime = new WakaTime(metadata, new Logger(Dependencies.GetConfigFilePath()));
+                _wakaTime.Initialize();
 
-            _settingsForm = new SettingsForm(_wakaTime.Config, _wakaTime.Logger);
+                _settingsForm = new SettingsForm(_wakaTime.Config, _wakaTime.Logger);
 
-            if (string.IsNullOrEmpty(_wakaTime.Config.GetSetting("api_key")))
-                PromptApiKey();
+                if (string.IsNullOrEmpty(_wakaTime.Config.GetSetting("api_key")))
+                    PromptApiKey();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "Initialize", _wakaTime?.Logger);
+            }
         }
 
         internal static void CommandMenuInit()
@@ -59,25 +66,39 @@ namespace WakaTime
 
         public static void OnNppNotification(ScNotification nc, IntPtr ptrPluginName)
         {
-            switch (nc.Header.Code)
+            try
             {
-                case (uint)NppMsg.NPPN_TBMODIFICATION:
-                    PluginBase._funcItems.RefreshItems();
-                    SetToolBarIcon();
-                    return;
-                case (uint)NppMsg.NPPN_READY:
-                    Initialize();
-                    return;
-                case (uint)NppMsg.NPPN_FILESAVED:
-                    _wakaTime.HandleActivity(GetCurrentFile(), true);
-                    return;
-                case (uint)SciMsg.SCN_MODIFIED when (nc.ModificationType & (int)SciMsg.SC_MOD_INSERTTEXT) == (int)SciMsg.SC_MOD_INSERTTEXT:
-                    _wakaTime?.HandleActivity(GetCurrentFile(), false);
-                    return;
-                case (uint)NppMsg.NPPN_SHUTDOWN:
-                    ShutDown();
-                    Marshal.FreeHGlobal(ptrPluginName);
-                    return;
+                switch (nc.Header.Code)
+                {
+                    case (uint)NppMsg.NPPN_TBMODIFICATION:
+                        PluginBase._funcItems.RefreshItems();
+                        SetToolBarIcon();
+                        return;
+                    case (uint)NppMsg.NPPN_READY:
+                        Initialize();
+                        return;
+                    case (uint)NppMsg.NPPN_FILESAVED:
+                        _wakaTime?.HandleActivity(GetCurrentFile(), true);
+                        return;
+                    case (uint)SciMsg.SCN_MODIFIED when (nc.ModificationType & (int)SciMsg.SC_MOD_INSERTTEXT) == (int)SciMsg.SC_MOD_INSERTTEXT:
+                        _wakaTime?.HandleActivity(GetCurrentFile(), false);
+                        return;
+                    case (uint)NppMsg.NPPN_SHUTDOWN:
+                        ShutDown();
+                        try
+                        {
+                            Marshal.FreeHGlobal(ptrPluginName);
+                        }
+                        catch (Exception ex)
+                        {
+                            Logger.LogException(ex, "OnNppNotification - FreeHGlobal", _wakaTime?.Logger);
+                        }
+                        return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "OnNppNotification", _wakaTime?.Logger);
             }
         }
 

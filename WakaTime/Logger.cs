@@ -77,5 +77,32 @@ namespace WakaTime
         {
             _writer?.Close();
         }
+
+        public static void LogException(Exception ex, string context, Logger logger = null)
+        {
+            try
+            {
+                if (logger != null)
+                {
+                    logger.Error($"{context}: {ex.Message}", ex);
+                }
+                else
+                {
+                    var temp = new Logger(Dependencies.GetConfigFilePath());
+                    try
+                    {
+                        temp.Error($"{context}: {ex.Message}", ex);
+                    }
+                    finally
+                    {
+                        temp.Close();
+                    }
+                }
+            }
+            catch
+            {
+                // swallow any exceptions during logging to avoid crashing host
+            }
+        }
     }
 }

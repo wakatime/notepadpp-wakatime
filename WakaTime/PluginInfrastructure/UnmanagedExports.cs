@@ -17,38 +17,77 @@ namespace Kbg.NppPluginNET
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void setInfo(NppData notepadPlusData)
         {
-            PluginBase.nppData = notepadPlusData;
-            //WakaTimePackage.CommandMenuInit();
+            try
+            {
+                PluginBase.nppData = notepadPlusData;
+                //WakaTimePackage.CommandMenuInit();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "UnmanagedExports.setInfo");
+            }
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static IntPtr getFuncsArray(ref int nbF)
         {
-            WakaTimePackage.CommandMenuInit();
-            nbF = PluginBase._funcItems.Items.Count;
-            return PluginBase._funcItems.NativePointer;
+            try
+            {
+                WakaTimePackage.CommandMenuInit();
+                nbF = PluginBase._funcItems.Items.Count;
+                return PluginBase._funcItems.NativePointer;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "UnmanagedExports.getFuncsArray");
+                nbF = 0;
+                return IntPtr.Zero;
+            }
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static uint messageProc(uint Message, IntPtr wParam, IntPtr lParam)
         {
-            return 1;
+            try
+            {
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "UnmanagedExports.messageProc");
+                return 1;
+            }
         }
 
         static IntPtr _ptrPluginName = IntPtr.Zero;
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static IntPtr getName()
         {
-            if (_ptrPluginName == IntPtr.Zero)
-                _ptrPluginName = Marshal.StringToHGlobalUni("WakaTime");
-            return _ptrPluginName;
+            try
+            {
+                if (_ptrPluginName == IntPtr.Zero)
+                    _ptrPluginName = Marshal.StringToHGlobalUni("WakaTime");
+                return _ptrPluginName;
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "UnmanagedExports.getName");
+                return IntPtr.Zero;
+            }
         }
 
         [DllExport(CallingConvention = CallingConvention.Cdecl)]
         static void beNotified(IntPtr notifyCode)
         {
-            var notification = (ScNotification)Marshal.PtrToStructure(notifyCode, typeof(ScNotification));
-            WakaTimePackage.OnNppNotification(notification, _ptrPluginName);
+            try
+            {
+                var notification = (ScNotification)Marshal.PtrToStructure(notifyCode, typeof(ScNotification));
+                WakaTimePackage.OnNppNotification(notification, _ptrPluginName);
+            }
+            catch (Exception ex)
+            {
+                Logger.LogException(ex, "UnmanagedExports.beNotified");
+            }
         }
     }
 }
