@@ -8,14 +8,14 @@ namespace Kbg.NppPluginNET
 {
     class UnmanagedExports
     {
-        [DllExport(CallingConvention=CallingConvention.Cdecl)]
-        static bool isUnicode()
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
+        public static bool isUnicode()
         {
             return true;
         }
 
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static void setInfo(NppData notepadPlusData)
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
+        public static void setInfo(NppData notepadPlusData)
         {
             try
             {
@@ -28,8 +28,8 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static IntPtr getFuncsArray(ref int nbF)
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
+        public static IntPtr getFuncsArray(ref int nbF)
         {
             try
             {
@@ -45,8 +45,8 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static uint messageProc(uint Message, IntPtr wParam, IntPtr lParam)
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
+        public static uint messageProc(uint Message, IntPtr wParam, IntPtr lParam)
         {
             try
             {
@@ -60,8 +60,8 @@ namespace Kbg.NppPluginNET
         }
 
         static IntPtr _ptrPluginName = IntPtr.Zero;
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static IntPtr getName()
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
+        public static IntPtr getName()
         {
             try
             {
@@ -76,8 +76,8 @@ namespace Kbg.NppPluginNET
             }
         }
 
-        [DllExport(CallingConvention = CallingConvention.Cdecl)]
-        static void beNotified(IntPtr notifyCode)
+        [DllExport(CallingConvention = CallingConvention.StdCall)]
+        public static void beNotified(IntPtr notifyCode)
         {
             try
             {
