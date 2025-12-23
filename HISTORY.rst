@@ -3,6 +3,13 @@ History
 -------
 
 
+5.1.2 (2025-12-23)
+++++++++++++++++++
+
+- Update method signatures for new Notepad versions.
+  `#63 <https://github.com/wakatime/notepadpp-wakatime/issues/63>`_
+
+
 5.1.1 (2023-11-01)
 ++++++++++++++++++
 
